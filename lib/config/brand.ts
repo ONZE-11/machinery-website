@@ -16,6 +16,13 @@ export const brand = {
   /** Canonical site URL. Override at runtime via NEXT_PUBLIC_SITE_URL env var. */
   siteUrl: 'https://maquinariajapones.es',
 
+  phone: '+34 601 080 799',
+
+  whatsapp: {
+    number: '34601080799',
+    url: 'https://wa.me/34601080799',
+  },
+
   emails: {
     info:    'info@maquinariajapones.es',
     privacy: 'privacidad@maquinariajapones.es',

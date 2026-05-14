@@ -43,7 +43,7 @@ export default function PrivacidadPage() {
                 <li><strong>NIF:</strong> B12345678</li>
                 <li><strong>Dirección:</strong> Polígono Industrial La Maquinaria, Nave 15, 28001 Madrid, España</li>
                 <li><strong>Email:</strong> {brand.emails.privacy}</li>
-                <li><strong>Teléfono:</strong> +34 600 000 000</li>
+                <li><strong>Teléfono:</strong> +34 601 080 799</li>
               </ul>
             </section>
 

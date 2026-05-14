@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Shovel, Tractor, Cog, ArrowUpFromLine, HardHat, Forklift, type LucideIcon } from 'lucide-react'
 import type { Category } from '@/types/database'
 import { mockCategories } from '@/lib/mock-data'
 
@@ -10,12 +10,13 @@ interface CategoriesSectionProps {
   categories?: Category[]
 }
 
-const categoryIcons: Record<string, string> = {
-  'mini-excavadoras': '🏗️',
-  'mini-tractores': '🚜',
-  'mini-cargadoras': '⚙️',
-  'elevadores-compactos': '📐',
-  'equipos-construccion': '🔧',
+const categoryIcons: Record<string, LucideIcon> = {
+  'mini-excavadoras': Shovel,
+  'mini-tractores': Tractor,
+  'mini-cargadoras': Cog,
+  'elevadores-compactos': ArrowUpFromLine,
+  'equipos-construccion': HardHat,
+  'carretillas-elevadoras': Forklift,
 }
 
 export function CategoriesSection({ categories }: CategoriesSectionProps) {
@@ -47,7 +48,9 @@ export function CategoriesSection({ categories }: CategoriesSectionProps) {
 
         {/* Categories Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displayCategories.map((category, index) => (
+          {displayCategories.map((category, index) => {
+            const Icon = categoryIcons[category.slug] || HardHat
+            return (
             <motion.div
               key={category.id}
               initial={{ opacity: 0, y: 30 }}
@@ -59,12 +62,12 @@ export function CategoriesSection({ categories }: CategoriesSectionProps) {
                 <div className="group relative h-64 rounded-lg overflow-hidden border border-border hover:border-primary/30 transition-all duration-300">
                   {/* Background */}
                   <div className="absolute inset-0 bg-gradient-to-br from-secondary to-background" />
-                  
+
                   {/* Content */}
                   <div className="relative h-full p-6 flex flex-col justify-between">
                     {/* Icon */}
-                    <div className="w-16 h-16 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-3xl">
-                      {categoryIcons[category.slug] || '🔧'}
+                    <div className="w-16 h-16 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
+                      <Icon className="w-8 h-8 text-primary" />
                     </div>
 
                     {/* Text */}
@@ -88,7 +91,8 @@ export function CategoriesSection({ categories }: CategoriesSectionProps) {
                 </div>
               </Link>
             </motion.div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>

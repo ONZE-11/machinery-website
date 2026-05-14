@@ -134,7 +134,7 @@ export function FAQPageClient() {
                   </Button>
                 </Link>
                 <a
-                  href="https://wa.me/34600000000"
+                  href="https://wa.me/34601080799"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

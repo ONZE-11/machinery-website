@@ -39,13 +39,18 @@ export const contactFormSchema = z.object({
     .string()
     .max(200, 'El producto de interés no puede superar 200 caracteres')
     .optional(),
-  
+
+  subject: z
+    .string()
+    .min(1, 'El asunto es obligatorio')
+    .max(200, 'El asunto no puede superar 200 caracteres'),
+
   message: z
     .string()
     .min(10, 'El mensaje debe tener al menos 10 caracteres')
     .max(2000, 'El mensaje no puede superar 2000 caracteres'),
   
-  consent: z
+  privacy_accepted: z
     .boolean()
     .refine((val) => val === true, 'Debes aceptar la política de privacidad'),
 })

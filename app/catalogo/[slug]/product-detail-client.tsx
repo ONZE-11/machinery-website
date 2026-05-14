@@ -255,7 +255,7 @@ export function ProductDetailClient({
                   </Button>
                 </Link>
                 <a
-                  href="https://wa.me/34600000000"
+                  href="https://wa.me/34601080799"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1"
@@ -377,10 +377,10 @@ export function ProductDetailClient({
                         Enviar Consulta
                       </Button>
                     </Link>
-                    <a href="tel:+34600000000">
+                    <a href="tel:+34601080799">
                       <Button variant="outline" className="gap-2">
                         <Phone className="h-4 w-4" />
-                        +34 600 000 000
+                        +34 601 080 799
                       </Button>
                     </a>
                   </div>

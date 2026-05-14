@@ -42,7 +42,7 @@ export default function AvisoLegalPage() {
                 <li><strong>Denominación social:</strong> {brand.legalName}</li>
                 <li><strong>NIF:</strong> B12345678</li>
                 <li><strong>Domicilio social:</strong> Polígono Industrial La Maquinaria, Nave 15, 28001 Madrid, España</li>
-                <li><strong>Teléfono:</strong> +34 600 000 000</li>
+                <li><strong>Teléfono:</strong> +34 601 080 799</li>
                 <li><strong>Email:</strong> {brand.emails.legal}</li>
                 <li><strong>Inscripción:</strong> Registro Mercantil de Madrid, Tomo XXXXX, Folio XXX, Hoja M-XXXXXX</li>
               </ul>

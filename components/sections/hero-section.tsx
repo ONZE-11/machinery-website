@@ -8,21 +8,24 @@ import { Button } from '@/components/ui/button'
 import { getContactSetting } from '@/lib/mock-data'
 
 export function HeroSection() {
-  const whatsappNumber = getContactSetting('whatsapp') || '34600000000'
+  const whatsappNumber = getContactSetting('whatsapp') || '34601080799'
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Hola%2C+me+interesa+vuestra+maquinaria+japonesa`
 
   return (
     <section className="relative w-full h-screen overflow-hidden pt-16">
       <Image
-        src="/images/hero-excavator.jpg"
+        src="/images/hero-main.jpg"
         alt="Maquinaria japonesa premium"
         fill
-        className="object-cover"
+        className="object-cover object-center"
         priority
         sizes="100vw"
       />
 
-      <div className="absolute inset-0 bg-black/50" />
+      {/* Cinematic overlay — darkens top/bottom, lighter in the middle */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/40 to-black/70" />
+      {/* Brand accent — subtle green wash at base ties image to brand palette */}
+      <div className="absolute inset-0 bg-gradient-to-t from-primary/25 via-transparent to-transparent" />
 
       <div className="relative h-full flex items-center justify-center">
         <motion.div

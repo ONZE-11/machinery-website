@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { motion } from "framer-motion"
-import { useForm } from "react-hook-form"
+import { useForm, type SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Header, Footer, WhatsAppButton } from "@/components/layout"
 import { Button } from "@/components/ui/button"
@@ -63,7 +63,7 @@ export function ContactoPageClient() {
     },
   })
 
-  const onSubmit = async (data: ContactFormData) => {
+  const onSubmit: SubmitHandler<ContactFormData> = async (data) => {
     setIsSubmitting(true)
     setSubmitStatus(null)
 
@@ -290,7 +290,7 @@ export function ContactoPageClient() {
                           id="phone"
                           {...register("phone")}
                           className="mt-2"
-                          placeholder="+34 600 000 000"
+                          placeholder="+34 601 080 799"
                         />
                         {errors.phone && (
                           <p className="text-red-500 text-sm mt-1">

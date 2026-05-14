@@ -56,8 +56,8 @@ INSERT INTO faq (question, answer, category, display_order, active) VALUES
 -- =============================================================================
 
 INSERT INTO contact_settings (setting_key, value, label, active) VALUES
-('phone', '+34 600 000 000', 'Teléfono principal', true),
-('whatsapp', '34600000000', 'WhatsApp', true),
+('phone', '+34 601 080 799', 'Teléfono principal', true),
+('whatsapp', '34601080799', 'WhatsApp', true),
 ('email', 'info@maquinariajaponesa.es', 'Email principal', true),
 ('address', 'Polígono Industrial El Ejemplo, Nave 42, 28000 Madrid, España', 'Dirección', true),
 ('hours', 'Lunes a Viernes: 9:00 - 18:00 | Sábados: 9:00 - 14:00', 'Horario', true);
@@ -67,7 +67,7 @@ INSERT INTO contact_settings (setting_key, value, label, active) VALUES
 -- =============================================================================
 
 INSERT INTO social_links (platform, url, icon, display_order, active) VALUES
-('whatsapp', 'https://wa.me/34600000000', 'whatsapp', 1, true),
+('whatsapp', 'https://wa.me/34601080799', 'whatsapp', 1, true),
 ('instagram', 'https://instagram.com/maquinariajaponesa', 'instagram', 2, true),
 ('tiktok', 'https://tiktok.com/@maquinariajaponesa', 'tiktok', 3, true),
 ('youtube', 'https://youtube.com/@maquinariajaponesa', 'youtube', 4, true);

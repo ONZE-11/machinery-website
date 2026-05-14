@@ -84,42 +84,54 @@ export function PorQueJaponesaClient() {
     <div className="min-h-screen bg-background">
       <Header />
       <main>
-        {/* Hero Section */}
-        <section className="relative py-20 bg-gradient-to-b from-muted/50 to-background overflow-hidden">
-          <div className="container mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-center max-w-4xl mx-auto"
-            >
-              <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
-                Excelencia Japonesa
-              </Badge>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-foreground mb-6">
-                ¿Por Qué Elegir{" "}
-                <span className="text-primary">Maquinaria Japonesa</span>?
-              </h1>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-8">
-                Japón es sinónimo de calidad, innovación y excelencia en la
-                fabricación de maquinaria industrial. Descubra las razones por
-                las que las empresas líderes del mundo confían en la tecnología
-                japonesa.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/catalogo">
-                  <Button size="lg" className="gap-2">
-                    Ver Catálogo
-                    <ArrowRight className="h-5 w-5" />
+        {/* Cinematic Hero */}
+        <section className="relative min-h-[460px] md:min-h-[540px] flex items-center overflow-hidden">
+          <Image
+            src="/images/hero-forklift.jpg"
+            alt="Carretilla elevadora japonesa — ingeniería de precisión"
+            fill
+            className="object-cover object-center"
+            priority
+          />
+          {/* Centered dark overlay — equal legibility across full width */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/50 to-black/70" />
+          {/* Brand green accent at base */}
+          <div className="absolute inset-0 bg-gradient-to-t from-primary/20 via-transparent to-transparent" />
+
+          <div className="relative z-10 w-full">
+            <div className="container mx-auto px-4 pt-24 pb-16 md:pt-28">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="text-center max-w-3xl mx-auto"
+              >
+                <Badge className="mb-4 bg-white/15 text-white border-white/25 backdrop-blur-sm">
+                  Excelencia Japonesa
+                </Badge>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading text-white mb-6">
+                  ¿Por Qué Elegir{" "}
+                  <span className="text-primary">Maquinaria Japonesa</span>?
+                </h1>
+                <p className="text-lg text-white/75 leading-relaxed mb-8 max-w-2xl mx-auto">
+                  Japón es sinónimo de calidad, innovación y excelencia en la
+                  fabricación de maquinaria industrial. Descubra las razones por
+                  las que las empresas líderes del mundo confían en la tecnología
+                  japonesa.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Button asChild size="lg" className="bg-primary text-white hover:bg-primary/90 gap-2">
+                    <Link href="/catalogo">
+                      Ver Catálogo
+                      <ArrowRight className="h-5 w-5" />
+                    </Link>
                   </Button>
-                </Link>
-                <Link href="/contacto">
-                  <Button size="lg" variant="outline">
-                    Solicitar Asesoramiento
+                  <Button asChild size="lg" variant="outline" className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:border-white/50">
+                    <Link href="/contacto">Solicitar Asesoramiento</Link>
                   </Button>
-                </Link>
-              </div>
-            </motion.div>
+                </div>
+              </motion.div>
+            </div>
           </div>
         </section>
 
@@ -240,10 +252,10 @@ export function PorQueJaponesaClient() {
               >
                 <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
                   <Image
-                    src="/images/about-inspection.jpg"
+                    src="/images/hero-light.jpg"
                     alt="Fabricación japonesa de precisión"
                     fill
-                    className="object-cover"
+                    className="object-cover object-center"
                   />
                 </div>
               </motion.div>

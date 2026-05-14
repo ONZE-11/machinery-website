@@ -57,74 +57,74 @@ export function SobreNosotrosClient() {
     <div className="min-h-screen bg-background">
       <Header />
       <main>
-        {/* Hero Section */}
-        <section className="relative py-20 bg-gradient-to-b from-muted/50 to-background overflow-hidden">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        {/* Cinematic Hero */}
+        <section className="relative min-h-[480px] md:min-h-[560px] flex items-center overflow-hidden">
+          <Image
+            src="/images/about-team.jpg"
+            alt="Equipo especialista en maquinaria japonesa"
+            fill
+            className="object-cover object-center"
+            priority
+          />
+          {/* Directional overlay — dark on left for text legibility */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/65 to-black/25" />
+          {/* Bottom fade — smooth transition to page content below */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+
+          {/* Text content */}
+          <div className="relative z-10 w-full">
+            <div className="container mx-auto px-4 pt-24 pb-16 md:pt-28">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
+                className="max-w-xl"
               >
-                <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
+                <Badge className="mb-4 bg-white/15 text-white border-white/25 backdrop-blur-sm">
                   Nuestra Historia
                 </Badge>
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-foreground mb-6">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading text-white mb-6">
                   Especialistas en{" "}
                   <span className="text-primary">Maquinaria Japonesa</span>
                 </h1>
-                <p className="text-lg text-muted-foreground leading-relaxed mb-8">
+                <p className="text-lg text-white/75 leading-relaxed mb-8 max-w-lg">
                   Desde 2009, nos dedicamos a importar la mejor maquinaria
                   japonesa para empresas españolas. Nuestra pasión por la
                   calidad japonesa y nuestro conocimiento del mercado nos
                   convierte en el socio ideal para su negocio.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Link href="/catalogo">
-                    <Button size="lg" className="gap-2">
+                  <Button asChild size="lg" className="bg-primary text-white hover:bg-primary/90 gap-2">
+                    <Link href="/catalogo">
                       Ver Catálogo
                       <ArrowRight className="h-5 w-5" />
-                    </Button>
-                  </Link>
-                  <Link href="/contacto">
-                    <Button size="lg" variant="outline">
-                      Contactar
-                    </Button>
-                  </Link>
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="relative"
-              >
-                <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
-                  <Image
-                    src="/images/about-team.jpg"
-                    alt="Equipo de profesionales"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                {/* Floating card */}
-                <div className="absolute -bottom-6 -left-6 bg-card border border-border rounded-lg p-4 shadow-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                      <Award className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <p className="font-bold text-foreground">+15 años</p>
-                      <p className="text-sm text-muted-foreground">
-                        de excelencia
-                      </p>
-                    </div>
-                  </div>
+                    </Link>
+                  </Button>
+                  <Button asChild size="lg" variant="outline" className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:border-white/50">
+                    <Link href="/contacto">Contactar</Link>
+                  </Button>
                 </div>
               </motion.div>
             </div>
           </div>
+
+          {/* Floating trust card — anchored bottom-right of section */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+            className="absolute bottom-8 right-6 md:right-12 z-20 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg p-4"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-full bg-primary/30 flex items-center justify-center">
+                <Award className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="font-bold text-white text-sm">+15 años</p>
+                <p className="text-xs text-white/65">de excelencia</p>
+              </div>
+            </div>
+          </motion.div>
         </section>
 
         {/* Stats Section */}

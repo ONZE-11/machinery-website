@@ -10,6 +10,7 @@ const footerLinks = {
     { name: 'Mini Tractores', href: '/catalogo?categoria=mini-tractores' },
     { name: 'Mini Cargadoras', href: '/catalogo?categoria=mini-cargadoras' },
     { name: 'Elevadores', href: '/catalogo?categoria=elevadores-compactos' },
+    { name: 'Carretillas', href: '/catalogo?categoria=carretillas-elevadoras' },
     { name: 'Ver Todo', href: '/catalogo' },
   ],
   marcas: [
@@ -18,6 +19,7 @@ const footerLinks = {
     { name: 'Komatsu', href: '/catalogo?marca=komatsu' },
     { name: 'Iseki', href: '/catalogo?marca=iseki' },
     { name: 'Hinowa', href: '/catalogo?marca=hinowa' },
+    { name: 'Toyota', href: '/catalogo?marca=toyota' },
   ],
   empresa: [
     { name: 'Sobre Nosotros', href: '/sobre-nosotros' },

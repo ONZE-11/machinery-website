@@ -11,14 +11,12 @@ import { Button } from '@/components/ui/button'
 import { getContactSetting } from '@/lib/mock-data'
 
 const navigation = [
+  { name: 'Inicio', href: '/' },
   { name: 'Catálogo', href: '/catalogo' },
   { name: 'Marcas', href: '/marcas' },
-  { name: '¿Por Qué Japonesa?', href: '/por-que-maquinaria-japonesa' },
-]
-
-const mobileSecondaryNav = [
-  { name: 'Sobre Nosotros', href: '/sobre-nosotros' },
   { name: 'FAQ', href: '/faq' },
+  { name: 'Sobre Nosotros', href: '/sobre-nosotros' },
+  { name: '¿Por Qué Japonesa?', href: '/por-que-maquinaria-japonesa' },
 ]
 
 export function Header() {
@@ -48,7 +46,7 @@ export function Header() {
         className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10"
         aria-label="Navegación principal"
       >
-        <div className="flex h-[68px] items-center justify-between gap-8">
+        <div className="flex h-[68px] items-center justify-between gap-6">
 
           {/* ── Logo ── */}
           <Link
@@ -94,8 +92,8 @@ export function Header() {
                   href={item.href}
                   aria-current={isActive ? 'page' : undefined}
                   className={cn(
-                    'relative px-4 py-2 text-[13px] font-medium tracking-wide transition-colors duration-200',
-                    'after:absolute after:bottom-0 after:left-4 after:right-4 after:h-[1.5px] after:rounded-full',
+                    'relative px-3 py-2 text-[13px] font-medium tracking-wide transition-colors duration-200',
+                    'after:absolute after:bottom-0 after:left-3 after:right-3 after:h-[1.5px] after:rounded-full',
                     'after:transition-transform after:duration-200 after:origin-left',
                     isScrolled
                       ? isActive
@@ -147,7 +145,7 @@ export function Header() {
                   : 'bg-white text-foreground hover:bg-white/90'
               )}
             >
-              <Link href="/contacto">Contactar</Link>
+              <Link href="/contacto">Contacto</Link>
             </Button>
           </div>
 
@@ -182,8 +180,7 @@ export function Header() {
             transition={{ duration: 0.18, ease: 'easeOut' }}
             className="lg:hidden bg-white border-b border-border shadow-lg"
           >
-            <div className="max-w-7xl mx-auto px-5 sm:px-8 py-5 space-y-1">
-              {/* Primary nav */}
+            <div className="max-w-7xl mx-auto px-5 sm:px-8 py-4 space-y-0.5">
               {navigation.map((item) => {
                 const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
                 return (
@@ -204,28 +201,13 @@ export function Header() {
                 )
               })}
 
-              {/* Secondary nav — subdued */}
-              <div className="pt-3 border-t border-border/50 space-y-1">
-                {mobileSecondaryNav.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center px-3 py-2 text-[13px] text-muted-foreground hover:text-foreground hover:bg-secondary/50 rounded-md transition-colors"
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-              </div>
-
-              {/* Mobile CTA */}
-              <div className="pt-4 pb-1">
+              <div className="pt-3 pb-1">
                 <Button
                   asChild
                   className="w-full h-10 bg-primary text-white hover:bg-primary/90 text-sm font-semibold rounded-[6px]"
                 >
                   <Link href="/contacto" onClick={() => setMobileMenuOpen(false)}>
-                    Contactar Ahora
+                    Contacto
                   </Link>
                 </Button>
               </div>

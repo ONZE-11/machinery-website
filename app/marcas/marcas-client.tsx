@@ -16,15 +16,17 @@ export function MarcasPageClient() {
       <main className="pt-16">
         {/* Dark Cinematic Hero */}
         <section className="relative h-96 md:h-[500px] lg:h-[600px] bg-cover bg-center flex items-center justify-center overflow-hidden">
-          {/* Background Image */}
-          <div className="absolute inset-0 bg-black/50 z-10" />
           <Image
-            src="/images/brands-hero.jpg"
-            alt="Marcas Japonesas Premium"
+            src="/images/hero-forklift.jpg"
+            alt="Maquinaria japonesa de precisión industrial"
             fill
-            className="object-cover"
+            className="object-cover object-center"
             priority
           />
+          {/* Cinematic overlay — graduated top/bottom, breathing room in center */}
+          <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/70 via-black/45 to-black/70" />
+          {/* Brand green accent at base */}
+          <div className="absolute inset-0 z-10 bg-gradient-to-t from-primary/20 via-transparent to-transparent" />
 
           {/* Content */}
           <div className="relative z-20 text-center max-w-3xl mx-auto px-4">
@@ -209,13 +211,13 @@ export function MarcasPageClient() {
 
         {/* CTA Section - Dark */}
         <section className="relative py-20 bg-cover bg-center flex items-center">
-          <div className="absolute inset-0 bg-black/60 z-10" />
           <Image
-            src="/images/cta-background.jpg"
-            alt="Contacto"
+            src="/images/hero-crane.jpg"
+            alt="Maquinaria japonesa"
             fill
-            className="object-cover"
+            className="object-cover object-center"
           />
+          <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/80 via-black/65 to-black/50" />
 
           <div className="relative z-20 container mx-auto px-4 text-center">
             <motion.div

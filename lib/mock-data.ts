@@ -76,6 +76,19 @@ export const mockCategories: Category[] = [
     display_order: 5,
     active: true,
     created_at: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: '6',
+    slug: 'carretillas-elevadoras',
+    name: 'Carretillas Elevadoras',
+    description: 'Carretillas elevadoras japonesas para almacenes, puertos y logística industrial. Ingeniería de precisión japonesa para la industria.',
+    image: '/images/categories/carretillas.jpg',
+    icon: 'forklift',
+    seo_title: 'Carretillas Elevadoras Japonesas | Forklifts de Alta Calidad',
+    seo_description: 'Carretillas elevadoras japonesas de segunda mano importadas directamente de Japón. Fiabilidad industrial certificada para almacenes y puertos.',
+    display_order: 6,
+    active: true,
+    created_at: '2024-01-01T00:00:00Z'
   }
 ]
 
@@ -156,6 +169,21 @@ export const mockBrands: Brand[] = [
     seo_title: 'Hinowa España | Plataformas Elevadoras Compactas',
     seo_description: 'Plataformas Hinowa de segunda mano. Elevadores compactos tipo oruga para trabajos en altura con máxima seguridad.',
     display_order: 5,
+    active: true,
+    created_at: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: '6',
+    slug: 'toyota',
+    name: 'Toyota',
+    country: 'Japón',
+    description: 'Toyota Industries Corporation es el fabricante de carretillas elevadoras número uno del mundo desde 1956. Reconocida por su filosofía de producción "Toyota Production System", sus carretillas destacan por la fiabilidad excepcional, bajo coste operativo y longevidad sin igual en entornos industriales exigentes.',
+    logo: '/images/brands/toyota-logo.png',
+    hero_image: '/images/brands/toyota-hero.jpg',
+    founded_year: 1956,
+    seo_title: 'Toyota España | Carretillas Elevadoras Japonesas',
+    seo_description: 'Carretillas elevadoras Toyota de segunda mano en España. Líder mundial en manutención industrial importado directamente de Japón.',
+    display_order: 6,
     active: true,
     created_at: '2024-01-01T00:00:00Z'
   }
@@ -414,6 +442,54 @@ export const mockProducts: Product[] = [
     status: 'published',
     created_at: '2024-03-01T00:00:00Z',
     updated_at: '2024-03-01T00:00:00Z'
+  },
+  {
+    id: '7',
+    slug: 'toyota-8fg25-carretilla-elevadora',
+    title: 'Toyota 8FG25 Carretilla Elevadora',
+    category_id: '6',
+    brand_id: '6',
+    model: '8FG25',
+    year: 2018,
+    condition: 'muy_bueno',
+    hours_used: 3200,
+    weight: 4140,
+    specifications: {
+      'Motor': 'Toyota 4Y-E (GLP/Gasolina)',
+      'Capacidad de carga': '2,500 kg',
+      'Centro de carga': '500 mm',
+      'Altura de elevación': '3,000 mm',
+      'Tipo de mástil': 'Estándar 2 etapas (FSV)',
+      'Transmisión': 'Convertidor de par automático',
+      'Neumáticos': 'Macizos cushion',
+      'Radio de giro': '2,380 mm'
+    },
+    description: `<p>La <strong>Toyota 8FG25</strong> es una carretilla elevadora contrabalanzada de la reconocida serie 8 de Toyota Industries, líder mundial en equipos de manutención con más de 65 años de experiencia.</p>
+    <p>Con capacidad de 2,500 kg y motor Toyota 4Y-E GLP/gasolina, esta unidad ha sido importada directamente de Japón con historial de mantenimiento completo y documentado.</p>
+    <h3>Características principales:</h3>
+    <ul>
+      <li>Motor Toyota 4Y-E de alta eficiencia (GLP/Gasolina intercambiable)</li>
+      <li>Transmisión automática con convertidor de par para máxima productividad</li>
+      <li>Dirección hidráulica asistida de respuesta precisa</li>
+      <li>Cabina ergonómica con asiento suspendido y visibilidad superior</li>
+      <li>Sistema de control de carga con indicador electrónico</li>
+      <li>Mantenimiento preventivo completo al día con documentación japonesa</li>
+    </ul>
+    <p>Ideal para almacenes logísticos, plataformas portuarias y operaciones industriales que exigen fiabilidad continua en turnos intensivos.</p>`,
+    short_description: 'Carretilla elevadora Toyota 8FG25 de 2,500 kg. Motor GLP/gasolina, 3,200 horas. Historial de mantenimiento japonés completo.',
+    featured: true,
+    hero_image: '/images/placeholder-machinery.jpg',
+    gallery_images: [
+      '/images/placeholder-machinery.jpg',
+      '/images/placeholder-machinery.jpg'
+    ],
+    price_on_request: true,
+    price: null,
+    seo_title: 'Toyota 8FG25 Carretilla Elevadora 2,500 kg | Segunda Mano',
+    seo_description: 'Carretilla elevadora Toyota 8FG25 de segunda mano. 2018, 3200 horas, motor GLP/gasolina. Importada de Japón con garantía.',
+    status: 'published',
+    created_at: '2024-03-10T00:00:00Z',
+    updated_at: '2024-03-10T00:00:00Z'
   }
 ]
 
@@ -576,7 +652,7 @@ export const mockContactSettings: ContactSettings[] = [
   {
     id: '1',
     setting_key: 'phone',
-    value: '+34 600 000 000',
+    value: '+34 601 080 799',
     label: 'Teléfono principal',
     active: true,
     updated_at: '2024-01-01T00:00:00Z'
@@ -584,7 +660,7 @@ export const mockContactSettings: ContactSettings[] = [
   {
     id: '2',
     setting_key: 'whatsapp',
-    value: '34600000000',
+    value: '34601080799',
     label: 'WhatsApp',
     active: true,
     updated_at: '2024-01-01T00:00:00Z'
@@ -623,7 +699,7 @@ export const mockSocialLinks: SocialLink[] = [
   {
     id: '1',
     platform: 'whatsapp',
-    url: 'https://wa.me/34600000000',
+    url: 'https://wa.me/34601080799',
     icon: 'whatsapp',
     display_order: 1,
     active: true,

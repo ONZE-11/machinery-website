@@ -53,18 +53,18 @@ export function ProductCard({ product }: ProductCardProps) {
         
         {/* Overlay on hover */}
         <div className={`absolute inset-0 bg-black/60 flex items-center justify-center gap-3 transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
-          <Link href={`/catalogo/${product.slug}`}>
-            <Button size="sm" variant="secondary" className="gap-2">
+          <Button asChild size="sm" variant="secondary" className="gap-2">
+            <Link href={`/catalogo/${product.slug}`}>
               <Eye className="h-4 w-4" />
               Ver Detalles
-            </Button>
-          </Link>
-          <Link href={`/contacto?producto=${product.slug}`}>
-            <Button size="sm" className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
+            </Link>
+          </Button>
+          <Button asChild size="sm" className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
+            <Link href={`/contacto?producto=${product.slug}`}>
               <MessageCircle className="h-4 w-4" />
               Consultar
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
 
         {/* Badges */}

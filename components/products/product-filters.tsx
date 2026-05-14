@@ -22,12 +22,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Filter, X } from "lucide-react"
 import type { Category, Brand } from "@/types/database"
 
-interface ProductFiltersProps {
-  categories: Category[]
-  brands: Brand[]
-  onFilterChange: (filters: FilterState) => void
-  initialFilters?: FilterState
-}
+// Computed once at module load — avoids server/client year mismatch on New Year's midnight
+const CURRENT_YEAR = new Date().getFullYear()
 
 export interface FilterState {
   search: string
@@ -51,38 +47,30 @@ const defaultFilters: FilterState = {
   sortBy: "newest",
 }
 
-export function ProductFilters({
+// ---------------------------------------------------------------------------
+// FilterPanelContent — defined at module scope so React sees a stable
+// component type across re-renders. Inline definition inside ProductFilters
+// would create a new type on every render, causing unnecessary remounts.
+// ---------------------------------------------------------------------------
+
+interface FilterPanelContentProps {
+  filters: FilterState
+  categories: Category[]
+  brands: Brand[]
+  hasActiveFilters: boolean
+  updateFilter: <K extends keyof FilterState>(key: K, value: FilterState[K]) => void
+  resetFilters: () => void
+}
+
+function FilterPanelContent({
+  filters,
   categories,
   brands,
-  onFilterChange,
-  initialFilters = defaultFilters,
-}: ProductFiltersProps) {
-  const [filters, setFilters] = useState<FilterState>(initialFilters)
-  const [isOpen, setIsOpen] = useState(false)
-
-  const updateFilter = <K extends keyof FilterState>(
-    key: K,
-    value: FilterState[K]
-  ) => {
-    const newFilters = { ...filters, [key]: value }
-    setFilters(newFilters)
-    onFilterChange(newFilters)
-  }
-
-  const resetFilters = () => {
-    setFilters(defaultFilters)
-    onFilterChange(defaultFilters)
-  }
-
-  const hasActiveFilters =
-    filters.category ||
-    filters.brand ||
-    filters.condition ||
-    filters.minYear ||
-    filters.maxYear ||
-    filters.featured
-
-  const FilterContent = () => (
+  hasActiveFilters,
+  updateFilter,
+  resetFilters,
+}: FilterPanelContentProps) {
+  return (
     <div className="space-y-6">
       {/* Search */}
       <div>
@@ -142,7 +130,7 @@ export function ProductFilters({
         </Select>
       </div>
 
-      {/* Condition */}
+      {/* Condition — values match the actual Product.condition type */}
       <div>
         <Label className="text-foreground">Estado</Label>
         <Select
@@ -156,9 +144,10 @@ export function ProductFilters({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos los estados</SelectItem>
-            <SelectItem value="new">Nuevo</SelectItem>
-            <SelectItem value="used">Usado</SelectItem>
-            <SelectItem value="refurbished">Reacondicionado</SelectItem>
+            <SelectItem value="excelente">Excelente</SelectItem>
+            <SelectItem value="muy_bueno">Muy Bueno</SelectItem>
+            <SelectItem value="bueno">Bueno</SelectItem>
+            <SelectItem value="aceptable">Aceptable</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -175,7 +164,7 @@ export function ProductFilters({
               updateFilter("minYear", e.target.value ? parseInt(e.target.value) : null)
             }
             min={1990}
-            max={new Date().getFullYear()}
+            max={CURRENT_YEAR}
           />
           <Input
             type="number"
@@ -185,7 +174,7 @@ export function ProductFilters({
               updateFilter("maxYear", e.target.value ? parseInt(e.target.value) : null)
             }
             min={1990}
-            max={new Date().getFullYear()}
+            max={CURRENT_YEAR}
           />
         </div>
       </div>
@@ -215,6 +204,59 @@ export function ProductFilters({
       )}
     </div>
   )
+}
+
+// ---------------------------------------------------------------------------
+// ProductFilters
+// ---------------------------------------------------------------------------
+
+interface ProductFiltersProps {
+  categories: Category[]
+  brands: Brand[]
+  onFilterChange: (filters: FilterState) => void
+  initialFilters?: FilterState
+}
+
+export function ProductFilters({
+  categories,
+  brands,
+  onFilterChange,
+  initialFilters = defaultFilters,
+}: ProductFiltersProps) {
+  const [filters, setFilters] = useState<FilterState>(initialFilters)
+  const [isOpen, setIsOpen] = useState(false)
+
+  const updateFilter = <K extends keyof FilterState>(
+    key: K,
+    value: FilterState[K]
+  ) => {
+    const newFilters = { ...filters, [key]: value }
+    setFilters(newFilters)
+    onFilterChange(newFilters)
+  }
+
+  const resetFilters = () => {
+    setFilters(defaultFilters)
+    onFilterChange(defaultFilters)
+  }
+
+  const hasActiveFilters = Boolean(
+    filters.category ||
+    filters.brand ||
+    filters.condition ||
+    filters.minYear ||
+    filters.maxYear ||
+    filters.featured
+  )
+
+  const panelProps: FilterPanelContentProps = {
+    filters,
+    categories,
+    brands,
+    hasActiveFilters,
+    updateFilter,
+    resetFilters,
+  }
 
   return (
     <>
@@ -229,7 +271,7 @@ export function ProductFilters({
               </Button>
             )}
           </div>
-          <FilterContent />
+          <FilterPanelContent {...panelProps} />
         </div>
       </div>
 
@@ -253,7 +295,7 @@ export function ProductFilters({
                 <SheetTitle>Filtros</SheetTitle>
               </SheetHeader>
               <div className="mt-6">
-                <FilterContent />
+                <FilterPanelContent {...panelProps} />
               </div>
             </SheetContent>
           </Sheet>

@@ -61,6 +61,16 @@ const nextConfig = {
         destination: '/privacidad',
         permanent: true,
       },
+      {
+        source: '/por-que-japonesa',
+        destination: '/por-que-maquinaria-japonesa',
+        permanent: true,
+      },
+      {
+        source: '/marcas-japonesas',
+        destination: '/marcas',
+        permanent: true,
+      },
     ]
   },
 }

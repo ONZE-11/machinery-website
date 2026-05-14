@@ -26,7 +26,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/por-que-japonesa`,
+      url: `${baseUrl}/por-que-maquinaria-japonesa`,
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
       priority: 0.7,
@@ -80,8 +80,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }))
 
   // Brand pages (filter URLs)
-  const brandPages = mockBrands.map((brand) => ({
-    url: `${baseUrl}/catalogo?marca=${brand.slug}`,
+  const brandPages = mockBrands.map((b) => ({
+    url: `${baseUrl}/catalogo?marca=${b.slug}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.7,

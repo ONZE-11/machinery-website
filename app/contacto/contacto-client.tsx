@@ -199,13 +199,16 @@ export function ContactoPageClient() {
                   </div>
                 </div>
 
-                {/* Map placeholder */}
+                {/* Map */}
                 <div className="mt-8 rounded-lg overflow-hidden border border-border">
-                  <div className="aspect-[4/3] bg-muted flex items-center justify-center">
-                    <p className="text-muted-foreground">
-                      Mapa interactivo disponible próximamente
-                    </p>
-                  </div>
+                  <iframe
+                    src="https://www.google.com/maps?q=Pol%C3%ADgono+Industrial+Fuente+del+Jarro%2C+Paterna%2C+Valencia%2C+Espa%C3%B1a&output=embed"
+                    className="w-full aspect-[4/3] border-0"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Ubicación Maquinaria Japonesa"
+                    allowFullScreen
+                  />
                 </div>
               </motion.div>
 

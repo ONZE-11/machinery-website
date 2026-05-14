@@ -1,0 +1,7 @@
+export { HeroSection } from './hero-section'
+export { FeaturedProducts } from './featured-products'
+export { CategoriesSection } from './categories-section'
+export { BrandsSection } from './brands-section'
+export { WhyJapaneseSection } from './why-japanese-section'
+export { FAQSection } from './faq-section'
+export { CTASection } from './cta-section'

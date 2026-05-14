@@ -8,10 +8,11 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Phone } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { getContactSetting } from '@/lib/mock-data'
 
 const navigation = [
   { name: 'Catálogo', href: '/catalogo' },
-  { name: 'Marcas', href: '/marcas-japonesas' },
+  { name: 'Marcas', href: '/marcas' },
   { name: '¿Por Qué Japonesa?', href: '/por-que-maquinaria-japonesa' },
 ]
 
@@ -24,6 +25,7 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathname = usePathname()
+  const phone = getContactSetting('phone')
 
   useEffect(() => {
     const handleScroll = () => {
@@ -114,7 +116,7 @@ export function Header() {
           <div className="hidden lg:flex lg:items-center lg:gap-4 shrink-0">
             {/* Phone — subtle link */}
             <a
-              href={`tel:${process.env.NEXT_PUBLIC_PHONE_NUMBER || '+34600000000'}`}
+              href={`tel:${phone.replace(/\s/g, '')}`}
               className={cn(
                 'flex items-center gap-1.5 text-[12px] font-medium transition-colors duration-200',
                 isScrolled
@@ -124,7 +126,7 @@ export function Header() {
             >
               <Phone className="w-3.5 h-3.5" />
               <span className="hidden xl:inline tabular-nums">
-                {process.env.NEXT_PUBLIC_PHONE_NUMBER || '+34 600 000 000'}
+                {phone}
               </span>
             </a>
 

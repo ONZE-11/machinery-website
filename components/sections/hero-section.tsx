@@ -39,8 +39,6 @@ export function HeroSection() {
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-white leading-tight mb-6">
             Maquinaria{' '}
             <span className="text-primary">Japonesa</span>
-            <br />
-            Premium
           </h1>
 
           <p className="text-lg sm:text-xl text-white/70 mb-8 font-light">

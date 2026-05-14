@@ -117,7 +117,7 @@ export function CatalogoPageClient() {
             <div className="flex flex-col lg:flex-row gap-8">
               {/* Sidebar Filters */}
               <aside className="lg:w-64 flex-shrink-0">
-                <div className="bg-white rounded-lg border border-border p-5 sticky top-24">
+                <div className="bg-card rounded-lg border border-border p-5 sticky top-24">
                   <ProductFilters
                     categories={mockCategories}
                     brands={mockBrands}
@@ -144,7 +144,7 @@ export function CatalogoPageClient() {
                       }))
                     }
                   >
-                    <SelectTrigger className="w-48 bg-white">
+                    <SelectTrigger className="w-48 bg-card">
                       <SelectValue placeholder="Ordenar por" />
                     </SelectTrigger>
                     <SelectContent>

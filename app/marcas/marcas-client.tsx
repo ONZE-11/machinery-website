@@ -230,7 +230,7 @@ export function MarcasPageClient() {
                 Si no encuentra la marca que busca, contáctenos. Podemos localizar y importar maquinaria de cualquier fabricante japonés según sus necesidades.
               </p>
               <Link href="/contacto">
-                <Button size="lg" className="bg-[var(--primary)] text-black hover:bg-[var(--primary)]/90 gap-2">
+                <Button size="lg" className="bg-[var(--primary)] text-white hover:bg-[var(--primary)]/90 gap-2">
                   Contactar Ahora
                   <ArrowRight className="h-5 w-5" />
                 </Button>

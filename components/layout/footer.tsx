@@ -13,11 +13,11 @@ const footerLinks = {
     { name: 'Ver Todo', href: '/catalogo' },
   ],
   marcas: [
-    { name: 'Kubota', href: '/marcas/kubota' },
-    { name: 'Yanmar', href: '/marcas/yanmar' },
-    { name: 'Komatsu', href: '/marcas/komatsu' },
-    { name: 'Iseki', href: '/marcas/iseki' },
-    { name: 'Hinowa', href: '/marcas/hinowa' },
+    { name: 'Kubota', href: '/catalogo?marca=kubota' },
+    { name: 'Yanmar', href: '/catalogo?marca=yanmar' },
+    { name: 'Komatsu', href: '/catalogo?marca=komatsu' },
+    { name: 'Iseki', href: '/catalogo?marca=iseki' },
+    { name: 'Hinowa', href: '/catalogo?marca=hinowa' },
   ],
   empresa: [
     { name: 'Sobre Nosotros', href: '/sobre-nosotros' },
@@ -102,7 +102,7 @@ export function Footer() {
             
             <p className="text-muted-foreground text-sm mb-6 max-w-sm">
               Especialistas en importación de maquinaria japonesa de segunda mano. 
-              Más de 20 años llevando la calidad japonesa a España.
+              Más de 15 años llevando la calidad japonesa a España.
             </p>
 
             {/* Contact Info */}

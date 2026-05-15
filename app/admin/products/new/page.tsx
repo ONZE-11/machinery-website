@@ -22,12 +22,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { mockCategories, mockBrands } from "@/lib/mock-data"
 import { productSchema, type ProductFormData } from "@/lib/validations"
-import { ArrowLeft, Save, Eye, Image, Plus, X } from "lucide-react"
+import { ImageUploader } from "@/components/admin/image-uploader"
+import { ArrowLeft, Save, Eye } from "lucide-react"
+
+// Condition labels and values aligned to Supabase schema enum
+const CONDITIONS = [
+  { value: "excelente", label: "Excelente" },
+  { value: "muy_bueno", label: "Muy Bueno" },
+  { value: "bueno", label: "Bueno" },
+  { value: "aceptable", label: "Aceptable" },
+] as const
 
 export default function NewProductPage() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [images, setImages] = useState<string[]>([])
 
   const {
     register,
@@ -38,54 +46,45 @@ export default function NewProductPage() {
   } = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
     defaultValues: {
-      name: "",
+      title: "",
       slug: "",
       description: "",
       short_description: "",
-      condition: "used",
+      condition: "bueno",
+      status: "draft",
       price: undefined,
-      price_on_request: false,
+      price_on_request: true,
       featured: false,
-      is_active: true,
-      images: [],
+      hero_image: "",
+      gallery_images: [],
       specifications: {},
     },
   })
 
-  const watchName = watch("name")
+  const watchTitle = watch("title")
   const watchPriceOnRequest = watch("price_on_request")
+  const watchStatus = watch("status")
 
-  // Auto-generate slug from name
-  const generateSlug = (name: string) => {
-    return name
+  const generateSlug = (title: string) =>
+    title
       .toLowerCase()
       .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[̀-ͯ]/g, "")
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "")
-  }
 
   const onSubmit = async (data: ProductFormData) => {
     setIsSubmitting(true)
-    
-    // Simulate API call - replace with Supabase when connected
+    // TODO Phase B API: POST /api/products with data
     try {
-      console.log("Product data:", { ...data, images })
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      console.log("Product payload:", data)
+      await new Promise((resolve) => setTimeout(resolve, 500))
       router.push("/admin/products")
     } catch (error) {
       console.error("Error creating product:", error)
     } finally {
       setIsSubmitting(false)
     }
-  }
-
-  const addImagePlaceholder = () => {
-    setImages([...images, `https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&h=600&fit=crop&q=80`])
-  }
-
-  const removeImage = (index: number) => {
-    setImages(images.filter((_, i) => i !== index))
   }
 
   return (
@@ -100,9 +99,7 @@ export default function NewProductPage() {
           </Link>
           <div>
             <h1 className="text-3xl font-bold text-foreground">New Product</h1>
-            <p className="text-muted-foreground">
-              Add a new product to your catalog
-            </p>
+            <p className="text-muted-foreground">Add a new product to your catalog</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -110,8 +107,8 @@ export default function NewProductPage() {
             <Eye className="h-4 w-4" />
             Preview
           </Button>
-          <Button 
-            onClick={handleSubmit(onSubmit)} 
+          <Button
+            onClick={handleSubmit(onSubmit)}
             disabled={isSubmitting}
             className="gap-2"
           >
@@ -132,6 +129,7 @@ export default function NewProductPage() {
                 <TabsTrigger value="seo">SEO</TabsTrigger>
               </TabsList>
 
+              {/* ── General ── */}
               <TabsContent value="general" className="space-y-6 mt-6">
                 <Card>
                   <CardHeader>
@@ -139,21 +137,21 @@ export default function NewProductPage() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <Label htmlFor="name">Product Name *</Label>
+                      <Label htmlFor="title">Product Title *</Label>
                       <Input
-                        id="name"
-                        {...register("name")}
+                        id="title"
+                        {...register("title")}
                         className="mt-2"
-                        placeholder="e.g., Komatsu PC200-8 Excavator"
+                        placeholder="e.g., Komatsu PC200-8 Excavadora"
                         onBlur={() => {
                           if (!watch("slug")) {
-                            setValue("slug", generateSlug(watchName))
+                            setValue("slug", generateSlug(watchTitle ?? ""))
                           }
                         }}
                       />
-                      {errors.name && (
+                      {errors.title && (
                         <p className="text-red-500 text-sm mt-1">
-                          {errors.name.message}
+                          {errors.title.message}
                         </p>
                       )}
                     </div>
@@ -164,7 +162,7 @@ export default function NewProductPage() {
                         id="slug"
                         {...register("slug")}
                         className="mt-2"
-                        placeholder="komatsu-pc200-8-excavator"
+                        placeholder="komatsu-pc200-8-excavadora"
                       />
                       {errors.slug && (
                         <p className="text-red-500 text-sm mt-1">
@@ -185,7 +183,7 @@ export default function NewProductPage() {
                     </div>
 
                     <div>
-                      <Label htmlFor="description">Full Description</Label>
+                      <Label htmlFor="description">Full Description *</Label>
                       <Textarea
                         id="description"
                         {...register("description")}
@@ -193,6 +191,11 @@ export default function NewProductPage() {
                         placeholder="Detailed product description with features and benefits..."
                         rows={6}
                       />
+                      {errors.description && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.description.message}
+                        </p>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -202,50 +205,75 @@ export default function NewProductPage() {
                   <CardHeader>
                     <CardTitle>Images</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {images.map((img, index) => (
-                        <div
-                          key={index}
-                          className="relative aspect-square bg-muted rounded-lg overflow-hidden group"
-                        >
-                          <img
-                            src={img}
-                            alt={`Product image ${index + 1}`}
-                            className="object-cover w-full h-full"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeImage(index)}
-                            className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                          >
-                            <X className="h-4 w-4" />
-                          </button>
-                          {index === 0 && (
-                            <span className="absolute bottom-2 left-2 text-xs px-2 py-1 bg-primary text-primary-foreground rounded">
-                              Main
-                            </span>
-                          )}
-                        </div>
-                      ))}
-                      <button
-                        type="button"
-                        onClick={addImagePlaceholder}
-                        className="aspect-square border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center gap-2 hover:border-primary/50 transition-colors"
-                      >
-                        <Image className="h-8 w-8 text-muted-foreground" />
-                        <span className="text-sm text-muted-foreground">
-                          Add Image
-                        </span>
-                      </button>
+                  <CardContent className="space-y-6">
+                    {/* Main / hero image */}
+                    <div>
+                      <Label>Main Image *</Label>
+                      <p className="text-xs text-muted-foreground mt-0.5 mb-3">
+                        Appears as the product thumbnail and hero on the product page.
+                      </p>
+                      <div className="w-40">
+                        <ImageUploader
+                          bucket="products"
+                          value={watch("hero_image") || undefined}
+                          onUpload={(url) => setValue("hero_image", url, { shouldValidate: true })}
+                          onRemove={() => setValue("hero_image", "", { shouldValidate: true })}
+                          label="Main product image"
+                        />
+                      </div>
+                      {errors.hero_image && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.hero_image.message}
+                        </p>
+                      )}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-4">
-                      Upload images or add URLs. First image will be the main product image.
-                    </p>
+
+                    {/* Gallery images */}
+                    <div>
+                      <Label>Gallery Images</Label>
+                      <p className="text-xs text-muted-foreground mt-0.5 mb-3">
+                        Additional images shown in the product gallery (max 9).
+                      </p>
+                      <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
+                        {(watch("gallery_images") ?? []).map((url, index) => (
+                          <ImageUploader
+                            key={url}
+                            bucket="products"
+                            value={url}
+                            onUpload={(newUrl) => {
+                              const current = watch("gallery_images") ?? []
+                              const updated = [...current]
+                              updated[index] = newUrl
+                              setValue("gallery_images", updated)
+                            }}
+                            onRemove={() => {
+                              const current = watch("gallery_images") ?? []
+                              setValue(
+                                "gallery_images",
+                                current.filter((_, i) => i !== index)
+                              )
+                            }}
+                          />
+                        ))}
+                        {/* "Add more" slot — hidden when at max */}
+                        {(watch("gallery_images") ?? []).length < 9 && (
+                          <ImageUploader
+                            bucket="products"
+                            onUpload={(url) => {
+                              const current = watch("gallery_images") ?? []
+                              setValue("gallery_images", [...current, url])
+                            }}
+                            onRemove={() => {}}
+                            label="Add image"
+                          />
+                        )}
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>
 
+              {/* ── Details ── */}
               <TabsContent value="details" className="space-y-6 mt-6">
                 <Card>
                   <CardHeader>
@@ -270,7 +298,7 @@ export default function NewProductPage() {
                           {...register("year", { valueAsNumber: true })}
                           className="mt-2"
                           placeholder="2020"
-                          min={1990}
+                          min={1980}
                           max={new Date().getFullYear()}
                         />
                       </div>
@@ -278,22 +306,23 @@ export default function NewProductPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="hours">Operating Hours</Label>
+                        <Label htmlFor="hours_used">Operating Hours</Label>
                         <Input
-                          id="hours"
+                          id="hours_used"
                           type="number"
-                          {...register("hours", { valueAsNumber: true })}
+                          {...register("hours_used", { valueAsNumber: true })}
                           className="mt-2"
                           placeholder="5000"
                         />
                       </div>
                       <div>
-                        <Label htmlFor="serial_number">Serial Number</Label>
+                        <Label htmlFor="weight">Weight (kg)</Label>
                         <Input
-                          id="serial_number"
-                          {...register("serial_number")}
+                          id="weight"
+                          type="number"
+                          {...register("weight", { valueAsNumber: true })}
                           className="mt-2"
-                          placeholder="KMTPC123456"
+                          placeholder="3500"
                         />
                       </div>
                     </div>
@@ -302,15 +331,22 @@ export default function NewProductPage() {
                       <Label>Condition *</Label>
                       <Select
                         value={watch("condition")}
-                        onValueChange={(value) => setValue("condition", value as "new" | "used" | "refurbished")}
+                        onValueChange={(value) =>
+                          setValue(
+                            "condition",
+                            value as ProductFormData["condition"]
+                          )
+                        }
                       >
                         <SelectTrigger className="mt-2">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="new">New</SelectItem>
-                          <SelectItem value="used">Used</SelectItem>
-                          <SelectItem value="refurbished">Refurbished</SelectItem>
+                          {CONDITIONS.map((c) => (
+                            <SelectItem key={c.value} value={c.value}>
+                              {c.label}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
@@ -318,6 +354,7 @@ export default function NewProductPage() {
                 </Card>
               </TabsContent>
 
+              {/* ── SEO ── */}
               <TabsContent value="seo" className="space-y-6 mt-6">
                 <Card>
                   <CardHeader>
@@ -325,29 +362,29 @@ export default function NewProductPage() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <Label htmlFor="meta_title">Meta Title</Label>
+                      <Label htmlFor="seo_title">Meta Title</Label>
                       <Input
-                        id="meta_title"
-                        {...register("meta_title")}
+                        id="seo_title"
+                        {...register("seo_title")}
                         className="mt-2"
-                        placeholder="Leave empty to use product name"
+                        placeholder="Leave empty to use product title"
                       />
                       <p className="text-xs text-muted-foreground mt-1">
-                        Recommended: 50-60 characters
+                        Recommended: 50–70 characters
                       </p>
                     </div>
 
                     <div>
-                      <Label htmlFor="meta_description">Meta Description</Label>
+                      <Label htmlFor="seo_description">Meta Description</Label>
                       <Textarea
-                        id="meta_description"
-                        {...register("meta_description")}
+                        id="seo_description"
+                        {...register("seo_description")}
                         className="mt-2"
                         placeholder="SEO description for search engines..."
                         rows={3}
                       />
                       <p className="text-xs text-muted-foreground mt-1">
-                        Recommended: 150-160 characters
+                        Recommended: 150–160 characters
                       </p>
                     </div>
                   </CardContent>
@@ -358,6 +395,7 @@ export default function NewProductPage() {
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* Organization */}
             <Card>
               <CardHeader>
                 <CardTitle>Organization</CardTitle>
@@ -366,7 +404,7 @@ export default function NewProductPage() {
                 <div>
                   <Label>Category</Label>
                   <Select
-                    value={watch("category_id") || ""}
+                    value={watch("category_id") ?? ""}
                     onValueChange={(value) => setValue("category_id", value)}
                   >
                     <SelectTrigger className="mt-2">
@@ -385,7 +423,7 @@ export default function NewProductPage() {
                 <div>
                   <Label>Brand</Label>
                   <Select
-                    value={watch("brand_id") || ""}
+                    value={watch("brand_id") ?? ""}
                     onValueChange={(value) => setValue("brand_id", value)}
                   >
                     <SelectTrigger className="mt-2">
@@ -403,6 +441,7 @@ export default function NewProductPage() {
               </CardContent>
             </Card>
 
+            {/* Pricing */}
             <Card>
               <CardHeader>
                 <CardTitle>Pricing</CardTitle>
@@ -438,22 +477,30 @@ export default function NewProductPage() {
               </CardContent>
             </Card>
 
+            {/* Status & Visibility */}
             <Card>
               <CardHeader>
-                <CardTitle>Visibility</CardTitle>
+                <CardTitle>Status</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="is_active"
-                    checked={watch("is_active")}
-                    onCheckedChange={(checked) =>
-                      setValue("is_active", checked === true)
+                <div>
+                  <Label>Publication Status</Label>
+                  <Select
+                    value={watchStatus}
+                    onValueChange={(value) =>
+                      setValue("status", value as ProductFormData["status"])
                     }
-                  />
-                  <Label htmlFor="is_active" className="cursor-pointer">
-                    Published (visible on site)
-                  </Label>
+                  >
+                    <SelectTrigger className="mt-2">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="draft">Draft</SelectItem>
+                      <SelectItem value="published">Published</SelectItem>
+                      <SelectItem value="reserved">Reserved</SelectItem>
+                      <SelectItem value="sold">Sold</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="flex items-center space-x-2">

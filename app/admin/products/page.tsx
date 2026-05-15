@@ -134,10 +134,14 @@ export default function ProductsPage() {
                     {product.featured && (
                       <Badge variant="secondary">Featured</Badge>
                     )}
-                    {product.is_active ? (
+                    {product.status === "published" ? (
                       <Badge className="bg-emerald-500/20 text-emerald-400">
-                        Active
+                        Published
                       </Badge>
+                    ) : product.status === "sold" ? (
+                      <Badge className="bg-red-500/20 text-red-400">Sold</Badge>
+                    ) : product.status === "reserved" ? (
+                      <Badge className="bg-blue-500/20 text-blue-400">Reserved</Badge>
                     ) : (
                       <Badge variant="outline">Draft</Badge>
                     )}

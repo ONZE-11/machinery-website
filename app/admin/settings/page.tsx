@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { mockContactSettings } from "@/lib/mock-data"
+import { getContactSetting } from "@/lib/mock-data"
 import { Save, Mail, Phone, MapPin, Clock } from "lucide-react"
 
 export default function SettingsPage() {
@@ -42,7 +42,7 @@ export default function SettingsPage() {
               <Input
                 id="email"
                 type="email"
-                defaultValue={mockContactSettings.email}
+                defaultValue={getContactSetting("email")}
                 className="mt-2"
               />
             </div>
@@ -50,7 +50,7 @@ export default function SettingsPage() {
               <Label htmlFor="phone">Phone</Label>
               <Input
                 id="phone"
-                defaultValue={mockContactSettings.phone}
+                defaultValue={getContactSetting("phone")}
                 className="mt-2"
               />
             </div>
@@ -58,7 +58,7 @@ export default function SettingsPage() {
               <Label htmlFor="whatsapp">WhatsApp</Label>
               <Input
                 id="whatsapp"
-                defaultValue={mockContactSettings.whatsapp || ""}
+                defaultValue={getContactSetting("whatsapp")}
                 className="mt-2"
               />
             </div>
@@ -79,7 +79,7 @@ export default function SettingsPage() {
               <Label htmlFor="address">Street Address</Label>
               <Input
                 id="address"
-                defaultValue={mockContactSettings.address}
+                defaultValue={getContactSetting("address")}
                 className="mt-2"
               />
             </div>
@@ -88,7 +88,7 @@ export default function SettingsPage() {
                 <Label htmlFor="city">City</Label>
                 <Input
                   id="city"
-                  defaultValue={mockContactSettings.city}
+                  defaultValue={getContactSetting("city")}
                   className="mt-2"
                 />
               </div>
@@ -96,7 +96,7 @@ export default function SettingsPage() {
                 <Label htmlFor="postal_code">Postal Code</Label>
                 <Input
                   id="postal_code"
-                  defaultValue={mockContactSettings.postal_code}
+                  defaultValue={getContactSetting("postal_code")}
                   className="mt-2"
                 />
               </div>
@@ -105,7 +105,7 @@ export default function SettingsPage() {
               <Label htmlFor="country">Country</Label>
               <Input
                 id="country"
-                defaultValue={mockContactSettings.country}
+                defaultValue={getContactSetting("country")}
                 className="mt-2"
               />
             </div>
@@ -126,7 +126,7 @@ export default function SettingsPage() {
               <Label htmlFor="hours">Business Hours</Label>
               <Textarea
                 id="hours"
-                defaultValue={mockContactSettings.business_hours}
+                defaultValue={getContactSetting("hours")}
                 className="mt-2"
                 rows={4}
               />

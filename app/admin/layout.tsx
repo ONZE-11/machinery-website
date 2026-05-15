@@ -1,5 +1,8 @@
 import type { Metadata } from "next"
+import { currentUser } from "@clerk/nextjs/server"
+import { redirect } from "next/navigation"
 import { AdminLayoutClient } from "./admin-layout-client"
+import { isAdminEmail } from "@/lib/admin-auth"
 
 export const metadata: Metadata = {
   title: "Admin Dashboard | Maquinaria Japonesa",
@@ -10,10 +13,34 @@ export const metadata: Metadata = {
   },
 }
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  return <AdminLayoutClient>{children}</AdminLayoutClient>
+  const user = await currentUser()
+
+  if (!user) {
+    redirect("/sign-in")
+  }
+
+  // Resolve primary email (fall back to first address if primary not set)
+  const primaryEmail =
+    user.emailAddresses.find((e) => e.id === user.primaryEmailAddressId)
+      ?.emailAddress ?? user.emailAddresses[0]?.emailAddress
+
+  if (!primaryEmail || !isAdminEmail(primaryEmail)) {
+    redirect("/?unauthorized=1")
+  }
+
+  const displayName =
+    user.fullName ??
+    user.username ??
+    primaryEmail.split("@")[0]
+
+  return (
+    <AdminLayoutClient user={{ name: displayName, email: primaryEmail }}>
+      {children}
+    </AdminLayoutClient>
+  )
 }

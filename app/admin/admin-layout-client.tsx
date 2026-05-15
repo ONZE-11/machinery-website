@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useClerk } from "@clerk/nextjs"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -27,73 +28,28 @@ import {
   Image as ImageIcon,
 } from "lucide-react"
 
-// Mock auth state - replace with Clerk when connected
-const mockUser = {
-  name: "Admin User",
-  email: "admin@maquinariajapones.es",
-  role: "admin",
-}
-
 const sidebarLinks = [
-  {
-    title: "Dashboard",
-    href: "/admin",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Products",
-    href: "/admin/products",
-    icon: Package,
-  },
-  {
-    title: "Categories",
-    href: "/admin/categories",
-    icon: FolderTree,
-  },
-  {
-    title: "Brands",
-    href: "/admin/brands",
-    icon: Factory,
-  },
-  {
-    title: "FAQ",
-    href: "/admin/faq",
-    icon: FileQuestion,
-  },
-  {
-    title: "Contact Messages",
-    href: "/admin/messages",
-    icon: Mail,
-  },
-  {
-    title: "Homepage",
-    href: "/admin/homepage",
-    icon: Home,
-  },
-  {
-    title: "Media",
-    href: "/admin/media",
-    icon: ImageIcon,
-  },
-  {
-    title: "Social Links",
-    href: "/admin/social",
-    icon: Globe,
-  },
-  {
-    title: "Admins",
-    href: "/admin/admins",
-    icon: Users,
-  },
-  {
-    title: "Settings",
-    href: "/admin/settings",
-    icon: Settings,
-  },
+  { title: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { title: "Products", href: "/admin/products", icon: Package },
+  { title: "Categories", href: "/admin/categories", icon: FolderTree },
+  { title: "Brands", href: "/admin/brands", icon: Factory },
+  { title: "FAQ", href: "/admin/faq", icon: FileQuestion },
+  { title: "Contact Messages", href: "/admin/messages", icon: Mail },
+  { title: "Homepage", href: "/admin/homepage", icon: Home },
+  { title: "Media", href: "/admin/media", icon: ImageIcon },
+  { title: "Social Links", href: "/admin/social", icon: Globe },
+  { title: "Admins", href: "/admin/admins", icon: Users },
+  { title: "Settings", href: "/admin/settings", icon: Settings },
 ]
 
-function SidebarContent({ onLinkClick }: { onLinkClick?: () => void }) {
+interface SidebarProps {
+  user: { name: string; email: string }
+  onLinkClick?: () => void
+}
+
+function SidebarContent({ user, onLinkClick }: SidebarProps) {
   const pathname = usePathname()
+  const { signOut } = useClerk()
 
   return (
     <div className="flex flex-col h-full">
@@ -114,9 +70,10 @@ function SidebarContent({ onLinkClick }: { onLinkClick?: () => void }) {
       <ScrollArea className="flex-1 py-4">
         <nav className="space-y-1 px-3">
           {sidebarLinks.map((link) => {
-            const isActive = pathname === link.href || 
+            const isActive =
+              pathname === link.href ||
               (link.href !== "/admin" && pathname.startsWith(link.href))
-            
+
             return (
               <Link
                 key={link.href}
@@ -142,15 +99,15 @@ function SidebarContent({ onLinkClick }: { onLinkClick?: () => void }) {
         <div className="flex items-center gap-3 mb-3">
           <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
             <span className="text-sm font-medium">
-              {mockUser.name.charAt(0)}
+              {user.name.charAt(0).toUpperCase()}
             </span>
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-foreground truncate">
-              {mockUser.name}
+              {user.name}
             </p>
             <p className="text-xs text-muted-foreground truncate">
-              {mockUser.email}
+              {user.email}
             </p>
           </div>
         </div>
@@ -161,7 +118,13 @@ function SidebarContent({ onLinkClick }: { onLinkClick?: () => void }) {
               View Site
             </Button>
           </Link>
-          <Button variant="ghost" size="sm" className="gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="gap-2"
+            onClick={() => signOut({ redirectUrl: "/" })}
+            title="Sign out"
+          >
             <LogOut className="h-4 w-4" />
           </Button>
         </div>
@@ -170,31 +133,19 @@ function SidebarContent({ onLinkClick }: { onLinkClick?: () => void }) {
   )
 }
 
-export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
+interface AdminLayoutClientProps {
+  children: React.ReactNode
+  user: { name: string; email: string }
+}
+
+export function AdminLayoutClient({ children, user }: AdminLayoutClientProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-
-  // Mock auth check - replace with Clerk when connected
-  const isAuthenticated = true // In production: useAuth().isSignedIn
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
-          <p className="text-muted-foreground mb-4">
-            Please sign in to access the admin dashboard.
-          </p>
-          <Button>Sign In</Button>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="min-h-screen bg-background">
       {/* Desktop Sidebar */}
       <aside className="fixed left-0 top-0 bottom-0 w-64 bg-card border-r border-border hidden lg:block">
-        <SidebarContent />
+        <SidebarContent user={user} />
       </aside>
 
       {/* Mobile Header */}
@@ -214,7 +165,10 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="p-0 w-64">
-              <SidebarContent onLinkClick={() => setSidebarOpen(false)} />
+              <SidebarContent
+                user={user}
+                onLinkClick={() => setSidebarOpen(false)}
+              />
             </SheetContent>
           </Sheet>
         </div>
@@ -222,9 +176,7 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
 
       {/* Main Content */}
       <main className="lg:ml-64">
-        <div className="p-6 lg:p-8">
-          {children}
-        </div>
+        <div className="p-6 lg:p-8">{children}</div>
       </main>
     </div>
   )

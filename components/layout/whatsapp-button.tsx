@@ -1,12 +1,25 @@
 'use client'
 
-import Link from 'next/link'
-import { getContactSetting } from '@/lib/mock-data'
+import { useState, useEffect } from 'react'
+
+const DEFAULT_WHATSAPP = '34601080799'
 
 export function WhatsAppButton() {
-  const whatsappNumber = getContactSetting('whatsapp')
+  const [whatsapp, setWhatsapp] = useState(DEFAULT_WHATSAPP)
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then((r) => r.json())
+      .then((rows: Array<{ setting_key: string; value: string }>) => {
+        if (!Array.isArray(rows)) return
+        const found = rows.find((r) => r.setting_key === 'whatsapp')
+        if (found?.value) setWhatsapp(found.value.replace(/[\s+]/g, ''))
+      })
+      .catch(() => {})
+  }, [])
+
   const message = encodeURIComponent('Hola, me interesa obtener información sobre su maquinaria japonesa.')
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`
+  const whatsappUrl = `https://wa.me/${whatsapp}?text=${message}`
 
   return (
     <a

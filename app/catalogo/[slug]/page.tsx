@@ -1,24 +1,27 @@
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
-import { mockProducts } from "@/lib/mock-data"
+import { Header, Footer, WhatsAppButton } from "@/components/layout"
 import { ProductDetailClient } from "./product-detail-client"
+import {
+  getProductBySlug,
+  getPublishedProductSlugs,
+  getRelatedProducts,
+} from "@/lib/supabase/queries"
 
 interface Props {
   params: Promise<{ slug: string }>
 }
 
+export const dynamicParams = true
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const product = mockProducts.find((p) => p.slug === slug)
+  const product = await getProductBySlug(slug)
 
-  if (!product) {
-    return {
-      title: "Producto no encontrado",
-    }
-  }
+  if (!product) return { title: "Producto no encontrado" }
 
   return {
-    title: `${product.title} | Maquinaria Japonesa`,
+    title: `${product.seo_title || product.title} | Maquinaria Japonesa`,
     description:
       product.seo_description ||
       `${product.title} - Maquinaria japonesa de alta calidad. Importación directa desde Japón.`,
@@ -38,23 +41,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export async function generateStaticParams() {
-  return mockProducts.map((product) => ({
-    slug: product.slug,
-  }))
+  const slugs = await getPublishedProductSlugs()
+  return slugs.map((slug) => ({ slug }))
 }
 
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params
-  const product = mockProducts.find((p) => p.slug === slug)
+  const product = await getProductBySlug(slug)
 
-  if (!product) {
-    notFound()
-  }
+  if (!product) notFound()
 
-  // Get related products (same category, different product)
-  const relatedProducts = mockProducts
-    .filter((p) => p.category_id === product.category_id && p.id !== product.id)
-    .slice(0, 3)
+  const relatedProducts = product.category_id
+    ? await getRelatedProducts(product.category_id, product.id, 3)
+    : []
 
-  return <ProductDetailClient product={product} relatedProducts={relatedProducts} />
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      <ProductDetailClient product={product} relatedProducts={relatedProducts} />
+      <Footer />
+      <WhatsAppButton />
+    </div>
+  )
 }

@@ -4,14 +4,13 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import type { Brand } from '@/types/database'
-import { mockBrands } from '@/lib/mock-data'
 
 interface BrandsSectionProps {
-  brands?: Brand[]
+  brands: Brand[]
 }
 
 export function BrandsSection({ brands }: BrandsSectionProps) {
-  const displayBrands = brands || mockBrands
+  const displayBrands = brands
 
   return (
     <section className="py-24 bg-background">

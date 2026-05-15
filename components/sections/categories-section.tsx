@@ -4,10 +4,9 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ArrowRight, Shovel, Tractor, Cog, ArrowUpFromLine, HardHat, Forklift, type LucideIcon } from 'lucide-react'
 import type { Category } from '@/types/database'
-import { mockCategories } from '@/lib/mock-data'
 
 interface CategoriesSectionProps {
-  categories?: Category[]
+  categories: Category[]
 }
 
 const categoryIcons: Record<string, LucideIcon> = {
@@ -20,7 +19,7 @@ const categoryIcons: Record<string, LucideIcon> = {
 }
 
 export function CategoriesSection({ categories }: CategoriesSectionProps) {
-  const displayCategories = categories || mockCategories
+  const displayCategories = categories
 
   return (
     <section className="py-24 bg-card">

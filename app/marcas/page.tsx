@@ -1,5 +1,7 @@
 import type { Metadata } from "next"
+import { Header, Footer, WhatsAppButton } from "@/components/layout"
 import { MarcasPageClient } from "./marcas-client"
+import { getActiveBrands, getPublishedProducts } from "@/lib/supabase/queries"
 
 export const metadata: Metadata = {
   title: "Marcas Japonesas de Maquinaria | Komatsu, Tadano, Toyota, Hitachi",
@@ -21,6 +23,18 @@ export const metadata: Metadata = {
   },
 }
 
-export default function MarcasPage() {
-  return <MarcasPageClient />
+export default async function MarcasPage() {
+  const [brands, products] = await Promise.all([
+    getActiveBrands(),
+    getPublishedProducts(),
+  ])
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      <MarcasPageClient brands={brands} products={products} />
+      <Footer />
+      <WhatsAppButton />
+    </div>
+  )
 }

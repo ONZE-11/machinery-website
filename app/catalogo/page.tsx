@@ -1,5 +1,11 @@
 import type { Metadata } from "next"
+import { Header, Footer, WhatsAppButton } from "@/components/layout"
 import { CatalogoPageClient } from "./catalogo-client"
+import {
+  getPublishedProducts,
+  getActiveCategories,
+  getActiveBrands,
+} from "@/lib/supabase/queries"
 
 export const metadata: Metadata = {
   title: "Catálogo de Maquinaria Japonesa | Excavadoras, Grúas, Carretillas",
@@ -21,6 +27,23 @@ export const metadata: Metadata = {
   },
 }
 
-export default function CatalogoPage() {
-  return <CatalogoPageClient />
+export default async function CatalogoPage() {
+  const [products, categories, brands] = await Promise.all([
+    getPublishedProducts(),
+    getActiveCategories(),
+    getActiveBrands(),
+  ])
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      <CatalogoPageClient
+        initialProducts={products}
+        categories={categories}
+        brands={brands}
+      />
+      <Footer />
+      <WhatsAppButton />
+    </div>
+  )
 }

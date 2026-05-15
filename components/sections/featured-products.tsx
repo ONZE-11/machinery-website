@@ -7,17 +7,13 @@ import { ArrowRight } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { getProductsWithRelations } from '@/lib/mock-data'
 import type { Product } from '@/types/database'
 
 interface FeaturedProductsProps {
-  products?: Product[]
+  products: Product[]
 }
 
-export function FeaturedProducts({ products: propProducts }: FeaturedProductsProps) {
-  // Use provided products or get featured products from mock data
-  const allProducts = propProducts || getProductsWithRelations()
-  const products = allProducts.filter(p => p.featured).slice(0, 6)
+export function FeaturedProducts({ products }: FeaturedProductsProps) {
 
   if (products.length === 0) {
     return null

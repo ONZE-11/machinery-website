@@ -4,7 +4,6 @@ import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { Header, Footer, WhatsAppButton } from "@/components/layout"
 import { ProductGrid } from "@/components/products"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -67,9 +66,7 @@ export function ProductDetailClient({
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <main className="py-8">
+    <main className="py-8">
         <div className="container mx-auto px-4">
           {/* Breadcrumbs */}
           <Breadcrumb className="mb-8">
@@ -399,9 +396,6 @@ export function ProductDetailClient({
             </section>
           )}
         </div>
-      </main>
-      <Footer />
-      <WhatsAppButton />
-    </div>
+    </main>
   )
 }

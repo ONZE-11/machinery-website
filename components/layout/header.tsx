@@ -8,8 +8,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Phone } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { getContactSetting } from '@/lib/mock-data'
-
 const navigation = [
   { name: 'Inicio', href: '/' },
   { name: 'Catálogo', href: '/catalogo' },
@@ -22,8 +20,18 @@ const navigation = [
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [phone, setPhone] = useState('')
   const pathname = usePathname()
-  const phone = getContactSetting('phone')
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then((r) => r.json())
+      .then((rows: Array<{ setting_key: string; value: string }>) => {
+        const found = Array.isArray(rows) ? rows.find((r) => r.setting_key === 'phone') : null
+        if (found) setPhone(found.value)
+      })
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {

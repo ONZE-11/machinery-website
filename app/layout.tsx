@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from 'next'
 import { Montserrat, Bebas_Neue } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { ClerkProvider } from '@clerk/nextjs'
 import { brand } from '@/lib/config/brand'
+// @ts-ignore: import global CSS side effect
 import './globals.css'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || brand.siteUrl
@@ -111,7 +113,9 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className="font-sans antialiased bg-background text-foreground">
-        {children}
+        <ClerkProvider>
+          {children}
+        </ClerkProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

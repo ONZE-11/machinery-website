@@ -1,5 +1,7 @@
 import type { Metadata } from "next"
+import { Header, Footer, WhatsAppButton } from "@/components/layout"
 import { FAQPageClient } from "./faq-client"
+import { getActiveFAQs } from "@/lib/supabase/queries"
 
 export const metadata: Metadata = {
   title: "Preguntas Frecuentes | Maquinaria Japonesa en España",
@@ -19,6 +21,15 @@ export const metadata: Metadata = {
   },
 }
 
-export default function FAQPage() {
-  return <FAQPageClient />
+export default async function FAQPage() {
+  const faqs = await getActiveFAQs()
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      <FAQPageClient faqs={faqs} />
+      <Footer />
+      <WhatsAppButton />
+    </div>
+  )
 }

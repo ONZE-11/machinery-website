@@ -11,15 +11,14 @@ import {
 } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
 import type { FAQ } from '@/types/database'
-import { mockFAQs } from '@/lib/mock-data'
 
 interface FAQSectionProps {
-  faqs?: FAQ[]
+  faqs: FAQ[]
   showAll?: boolean
 }
 
 export function FAQSection({ faqs, showAll = false }: FAQSectionProps) {
-  const displayFaqs = faqs || mockFAQs
+  const displayFaqs = faqs
   const shownFaqs = showAll ? displayFaqs : displayFaqs.slice(0, 5)
 
   return (

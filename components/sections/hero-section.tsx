@@ -4,11 +4,23 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { ArrowRight, ChevronDown, MessageCircle } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { getContactSetting } from '@/lib/mock-data'
 
 export function HeroSection() {
-  const whatsappNumber = getContactSetting('whatsapp') || '34601080799'
+  const [whatsappNumber, setWhatsappNumber] = useState('34601080799')
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then((r) => r.json())
+      .then((rows: Array<{ setting_key: string; value: string }>) => {
+        if (!Array.isArray(rows)) return
+        const found = rows.find((r) => r.setting_key === 'whatsapp')
+        if (found?.value) setWhatsappNumber(found.value.replace(/[\s+]/g, ''))
+      })
+      .catch(() => {})
+  }, [])
+
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Hola%2C+me+interesa+vuestra+maquinaria+japonesa`
 
   return (

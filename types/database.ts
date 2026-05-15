@@ -107,6 +107,21 @@ export interface SocialLink {
   created_at: string
 }
 
+export interface ContactSubmission {
+  id: string
+  name: string
+  email: string
+  phone: string | null
+  company: string | null
+  product_interest: string | null
+  message: string
+  ip_address: string | null
+  user_agent: string | null
+  read: boolean
+  replied: boolean
+  created_at: string
+}
+
 export interface Admin {
   id: string
   clerk_user_id: string

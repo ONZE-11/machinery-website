@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Phone, Mail, MapPin, Instagram, Youtube } from 'lucide-react'
-import { getActiveSocialLinks, getContactSetting } from '@/lib/mock-data'
+import { getContactSettings, getActiveSocialLinks } from '@/lib/supabase/queries'
 import { brand } from '@/lib/config/brand'
+import type { SocialLink } from '@/types/database'
 
 const footerLinks = {
   catalogo: [
@@ -57,16 +58,19 @@ function SocialIcon({ platform }: { platform: string }) {
   }
 }
 
-export function Footer() {
-  const socialLinks = getActiveSocialLinks()
-  const phone = getContactSetting('phone')
-  const email = getContactSetting('email')
-  const address = getContactSetting('address')
-  const hours = getContactSetting('hours')
+export async function Footer() {
+  const [settings, socialLinks] = await Promise.all([
+    getContactSettings(),
+    getActiveSocialLinks(),
+  ])
+
+  const phone = settings.phone ?? ''
+  const email = settings.email ?? ''
+  const address = settings.address ?? ''
+  const hours = settings.hours ?? ''
 
   return (
     <footer className="relative border-t border-border overflow-hidden">
-      {/* Background Texture */}
       <div className="absolute inset-0">
         <Image
           src="/images/footer-texture.jpg"
@@ -77,8 +81,7 @@ export function Footer() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/98 to-background/95" />
       </div>
-      
-      {/* Main Footer */}
+
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
           {/* Brand & Contact */}
@@ -95,61 +98,61 @@ export function Footer() {
                   <span className="font-serif text-xl tracking-wider text-foreground block">
                     MAQUINARIA JAPONESA
                   </span>
-                  <span className="text-xs text-muted-foreground tracking-widest">
-                    ESPAÑA
-                  </span>
+                  <span className="text-xs text-muted-foreground tracking-widest">ESPAÑA</span>
                 </div>
               </div>
             </Link>
-            
+
             <p className="text-muted-foreground text-sm mb-6 max-w-sm">
-              Especialistas en importación de maquinaria japonesa de segunda mano. 
+              Especialistas en importación de maquinaria japonesa de segunda mano.
               Más de 15 años llevando la calidad japonesa a España.
             </p>
 
-            {/* Contact Info */}
             <div className="space-y-3">
-              <a href={`tel:${phone.replace(/\s/g, '')}`} className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors">
-                <Phone className="w-4 h-4 text-primary" />
-                <span>{phone}</span>
-              </a>
-              <a href={`mailto:${email}`} className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors">
-                <Mail className="w-4 h-4 text-primary" />
-                <span>{email}</span>
-              </a>
-              <div className="flex items-start gap-3 text-sm text-muted-foreground">
-                <MapPin className="w-4 h-4 text-primary mt-0.5" />
-                <span>{address}</span>
-              </div>
+              {phone && (
+                <a href={`tel:${phone.replace(/\s/g, '')}`} className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors">
+                  <Phone className="w-4 h-4 text-primary" />
+                  <span>{phone}</span>
+                </a>
+              )}
+              {email && (
+                <a href={`mailto:${email}`} className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors">
+                  <Mail className="w-4 h-4 text-primary" />
+                  <span>{email}</span>
+                </a>
+              )}
+              {address && (
+                <div className="flex items-start gap-3 text-sm text-muted-foreground">
+                  <MapPin className="w-4 h-4 text-primary mt-0.5" />
+                  <span>{address}</span>
+                </div>
+              )}
             </div>
 
-            {/* Social Links */}
-            <div className="flex items-center gap-4 mt-6">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.id}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-lg bg-secondary/80 border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-primary/5 transition-colors"
-                  aria-label={`Síguenos en ${social.platform}`}
-                >
-                  <SocialIcon platform={social.platform} />
-                </a>
-              ))}
-            </div>
+            {socialLinks.length > 0 && (
+              <div className="flex items-center gap-4 mt-6">
+                {socialLinks.map((social: SocialLink) => (
+                  <a
+                    key={social.id}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-lg bg-secondary/80 border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-primary/5 transition-colors"
+                    aria-label={`Síguenos en ${social.platform}`}
+                  >
+                    <SocialIcon platform={social.platform} />
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Catálogo */}
           <div>
             <h3 className="font-serif text-lg tracking-wider text-foreground mb-4">CATÁLOGO</h3>
             <ul className="space-y-2">
               {footerLinks.catalogo.map((link) => (
                 <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
+                  <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors">
                     {link.name}
                   </Link>
                 </li>
@@ -157,16 +160,12 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Marcas */}
           <div>
             <h3 className="font-serif text-lg tracking-wider text-foreground mb-4">MARCAS</h3>
             <ul className="space-y-2">
               {footerLinks.marcas.map((link) => (
                 <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
+                  <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors">
                     {link.name}
                   </Link>
                 </li>
@@ -174,30 +173,22 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Empresa */}
           <div>
             <h3 className="font-serif text-lg tracking-wider text-foreground mb-4">EMPRESA</h3>
             <ul className="space-y-2">
               {footerLinks.empresa.map((link) => (
                 <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
+                  <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors">
                     {link.name}
                   </Link>
                 </li>
               ))}
             </ul>
-            
             <h3 className="font-serif text-lg tracking-wider text-foreground mb-4 mt-8">LEGAL</h3>
             <ul className="space-y-2">
               {footerLinks.legal.map((link) => (
                 <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
+                  <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors">
                     {link.name}
                   </Link>
                 </li>
@@ -207,16 +198,15 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Bottom Bar */}
       <div className="relative border-t border-border/50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-xs text-muted-foreground">
               © {new Date().getFullYear()} {brand.name}. Todos los derechos reservados.
             </p>
-            <p className="text-xs text-muted-foreground">
-              {hours}
-            </p>
+            {hours && (
+              <p className="text-xs text-muted-foreground">{hours}</p>
+            )}
           </div>
         </div>
       </div>

@@ -4,13 +4,27 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Phone, Mail, MessageCircle, ArrowRight } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { getContactSetting } from '@/lib/mock-data'
 
 export function CTASection() {
-  const phone = getContactSetting('phone')
-  const email = getContactSetting('email')
-  const whatsapp = getContactSetting('whatsapp')
+  const [phone, setPhone] = useState('')
+  const [email, setEmail] = useState('')
+  const [whatsapp, setWhatsapp] = useState('34601080799')
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then((r) => r.json())
+      .then((rows: Array<{ setting_key: string; value: string }>) => {
+        if (!Array.isArray(rows)) return
+        rows.forEach((r) => {
+          if (r.setting_key === 'phone') setPhone(r.value)
+          if (r.setting_key === 'email') setEmail(r.value)
+          if (r.setting_key === 'whatsapp') setWhatsapp(r.value.replace(/[\s+]/g, ''))
+        })
+      })
+      .catch(() => {})
+  }, [])
 
   return (
     <section className="py-24 relative overflow-hidden">

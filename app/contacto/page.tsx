@@ -1,6 +1,8 @@
 import { Suspense } from "react"
 import type { Metadata } from "next"
+import { Header, Footer, WhatsAppButton } from "@/components/layout"
 import { ContactoPageClient } from "./contacto-client"
+import { getContactSettings, getProductsBasic } from "@/lib/supabase/queries"
 
 export const metadata: Metadata = {
   title: "Contacto | Maquinaria Japonesa en España",
@@ -20,10 +22,20 @@ export const metadata: Metadata = {
   },
 }
 
-export default function ContactoPage() {
+export default async function ContactoPage() {
+  const [settings, products] = await Promise.all([
+    getContactSettings(),
+    getProductsBasic(),
+  ])
+
   return (
-    <Suspense fallback={null}>
-      <ContactoPageClient />
-    </Suspense>
+    <div className="min-h-screen bg-background">
+      <Header />
+      <Suspense fallback={null}>
+        <ContactoPageClient settings={settings} products={products} />
+      </Suspense>
+      <Footer />
+      <WhatsAppButton />
+    </div>
   )
 }

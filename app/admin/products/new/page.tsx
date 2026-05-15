@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useForm } from "react-hook-form"
@@ -20,10 +20,10 @@ import {
 } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { mockCategories, mockBrands } from "@/lib/mock-data"
 import { productSchema, type ProductFormData } from "@/lib/validations"
 import { ImageUploader } from "@/components/admin/image-uploader"
 import { ArrowLeft, Save, Eye } from "lucide-react"
+import type { Category, Brand } from "@/types/database"
 
 // Condition labels and values aligned to Supabase schema enum
 const CONDITIONS = [
@@ -36,6 +36,13 @@ const CONDITIONS = [
 export default function NewProductPage() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [categories, setCategories] = useState<Category[]>([])
+  const [brands, setBrands] = useState<Brand[]>([])
+
+  useEffect(() => {
+    fetch("/api/categories").then((r) => r.json()).then((d) => { if (Array.isArray(d)) setCategories(d) }).catch(() => {})
+    fetch("/api/brands").then((r) => r.json()).then((d) => { if (Array.isArray(d)) setBrands(d) }).catch(() => {})
+  }, [])
 
   const {
     register,
@@ -411,7 +418,7 @@ export default function NewProductPage() {
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
-                      {mockCategories.map((cat) => (
+                      {categories.map((cat) => (
                         <SelectItem key={cat.id} value={cat.id}>
                           {cat.name}
                         </SelectItem>
@@ -430,7 +437,7 @@ export default function NewProductPage() {
                       <SelectValue placeholder="Select brand" />
                     </SelectTrigger>
                     <SelectContent>
-                      {mockBrands.map((brand) => (
+                      {brands.map((brand) => (
                         <SelectItem key={brand.id} value={brand.id}>
                           {brand.name}
                         </SelectItem>

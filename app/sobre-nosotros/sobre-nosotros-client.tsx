@@ -3,7 +3,6 @@
 import Image from "next/image"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { Header, Footer, WhatsAppButton } from "@/components/layout"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -54,9 +53,7 @@ export function SobreNosotrosClient() {
   ]
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <main>
+    <main>
         {/* Cinematic Hero */}
         <section className="relative min-h-[480px] md:min-h-[560px] flex items-center overflow-hidden">
           <Image
@@ -333,9 +330,6 @@ export function SobreNosotrosClient() {
             </motion.div>
           </div>
         </section>
-      </main>
-      <Footer />
-      <WhatsAppButton />
-    </div>
+    </main>
   )
 }

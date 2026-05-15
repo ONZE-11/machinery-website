@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { Header, Footer, WhatsAppButton } from "@/components/layout"
 import { PorQueJaponesaClient } from "./por-que-japonesa-client"
 
 export const metadata: Metadata = {
@@ -20,5 +21,12 @@ export const metadata: Metadata = {
 }
 
 export default function PorQueJaponesaPage() {
-  return <PorQueJaponesaClient />
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      <PorQueJaponesaClient />
+      <Footer />
+      <WhatsAppButton />
+    </div>
+  )
 }

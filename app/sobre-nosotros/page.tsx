@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { Header, Footer, WhatsAppButton } from "@/components/layout"
 import { SobreNosotrosClient } from "./sobre-nosotros-client"
 
 export const metadata: Metadata = {
@@ -20,5 +21,12 @@ export const metadata: Metadata = {
 }
 
 export default function SobreNosotrosPage() {
-  return <SobreNosotrosClient />
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      <SobreNosotrosClient />
+      <Footer />
+      <WhatsAppButton />
+    </div>
+  )
 }

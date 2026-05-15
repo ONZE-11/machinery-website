@@ -1,5 +1,6 @@
-// Server-only query helpers — import only in server components, route handlers, or sitemap.
-import { createClient } from "./server"
+// Public query helpers — safe in server components, generateStaticParams, and sitemap.
+// Uses createBrowserClient (no cookies, no request scope) so it works at build time.
+import { createClient } from "./client"
 import type { Product, Category, Brand, FAQ, SocialLink } from "@/types/database"
 
 // ─── Products ────────────────────────────────────────────────────────────────

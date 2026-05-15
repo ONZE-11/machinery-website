@@ -3,7 +3,6 @@
 import Image from "next/image"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { Header, Footer, WhatsAppButton } from "@/components/layout"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -81,9 +80,7 @@ export function PorQueJaponesaClient() {
   ]
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <main>
+    <main>
         {/* Hero Section */}
         <section className="relative py-20 bg-gradient-to-b from-muted/50 to-background overflow-hidden">
           <div className="container mx-auto px-4">
@@ -323,9 +320,6 @@ export function PorQueJaponesaClient() {
             </motion.div>
           </div>
         </section>
-      </main>
-      <Footer />
-      <WhatsAppButton />
-    </div>
+    </main>
   )
 }

@@ -13,7 +13,7 @@ const SECTION_LABELS: Record<string, string> = {
   hero:              "Home — main hero",
   why_japanese_home: "Home — Why Japanese section",
   why_japanese_page: "Page — ¿Por Qué Japonesa? (/por-que-maquinaria-japonesa)",
-  hero_secondary:    "Secondary / contact hero",
+  hero_secondary:    "Page — ¿Por Qué Japonesa? hero (/por-que-maquinaria-japonesa)",
   trust:             "About / trust section (/sobre-nosotros)",
 }
 

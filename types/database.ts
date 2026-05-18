@@ -70,6 +70,7 @@ export interface HomepageSection {
   subtitle: string | null
   content: string | null
   image: string | null
+  custom_image?: string | null
   cta_text: string | null
   cta_link: string | null
   display_order: number

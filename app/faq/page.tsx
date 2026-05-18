@@ -1,18 +1,26 @@
 import { Footer, Header, WhatsAppButton } from "@/components/layout"
 import { FAQPageClient } from "./faq-client"
+import { createAdminClient } from "@/lib/supabase/server"
 
 export default async function FAQPage() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
+  const supabase = await createAdminClient()
 
-  const res = await fetch(`${baseUrl}/api/faq`, {
-    cache: "no-store",
-  })
+  let faqs = []
 
-  const data = await res.json()
+  if (supabase) {
+    const { data, error } = await supabase
+      .from("faq")
+      .select("*")
+      .eq("active", true)
+      .order("display_order", { ascending: true })
+      .order("created_at", { ascending: true })
 
-  const faqs = Array.isArray(data)
-    ? data.filter((faq) => faq.active)
-    : []
+    if (error) {
+      console.error("FAQ PAGE SUPABASE ERROR:", error.message)
+    } else {
+      faqs = data || []
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background">

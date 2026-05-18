@@ -1,7 +1,9 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
+import { useState, useEffect } from 'react'
 import { ArrowRight, Shield, Wrench, Clock, Award, Truck, HeartHandshake } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -9,86 +11,144 @@ const features = [
   {
     icon: Shield,
     title: 'Calidad Certificada',
-    description: 'Cada máquina pasa rigurosas inspecciones técnicas antes de ser ofertada. Garantizamos la autenticidad de las horas de trabajo.',
+    description: 'Inspecciones técnicas rigurosas antes de cada oferta. Autenticidad de horas garantizada.',
   },
   {
     icon: Wrench,
     title: 'Mantenimiento Japonés',
-    description: 'En Japón, las máquinas se mantienen con estándares impecables. Las revisiones son obligatorias y documentadas.',
+    description: 'Revisiones obligatorias y documentadas conforme a los estándares impecables de Japón.',
   },
   {
     icon: Clock,
     title: 'Durabilidad Legendaria',
-    description: 'La ingeniería japonesa es sinónimo de longevidad. Nuestras máquinas tienen décadas de vida útil por delante.',
+    description: 'Ingeniería japonesa diseñada para décadas. La mejor relación vida útil por euro invertido.',
   },
   {
     icon: Award,
     title: 'Marcas Premium',
-    description: 'Trabajamos con Kubota, Yanmar, Komatsu, Iseki y otras marcas líderes reconocidas mundialmente.',
+    description: 'Kubota, Yanmar, Komatsu, Iseki y Toyota: los fabricantes más valorados del mundo.',
   },
   {
     icon: Truck,
     title: 'Entrega Nacional',
-    description: 'Realizamos entregas en toda España peninsular e islas. Transporte especializado y seguro.',
+    description: 'Transporte especializado a toda España peninsular e islas. Seguro y puntual.',
   },
   {
     icon: HeartHandshake,
     title: 'Garantía Incluida',
-    description: 'Todas nuestras máquinas incluyen garantía. Servicio técnico y recambios disponibles.',
+    description: 'Garantía en motor e hidráulica en todos los equipos. Servicio técnico propio.',
   },
 ]
 
-export function WhyJapaneseSection() {
-  return (
-    <section className="py-24 bg-card relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4A017' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }} />
-      </div>
+const stats = [
+  { value: '+500', label: 'Máquinas vendidas' },
+  { value: '15+', label: 'Años de experiencia' },
+  { value: '98%', label: 'Clientes satisfechos' },
+  { value: '24h', label: 'Respuesta garantizada' },
+]
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="text-center mb-16">
+const DEFAULT_IMAGE = '/images/homepage-why-japanese.jpg'
+
+interface WhyJapaneseSectionProps {
+  imageUrl?: string | null
+}
+
+export function WhyJapaneseSection({ imageUrl }: WhyJapaneseSectionProps) {
+  const [currentImage, setCurrentImage] = useState(imageUrl || DEFAULT_IMAGE)
+
+  useEffect(() => {
+    setCurrentImage(imageUrl || DEFAULT_IMAGE)
+  }, [imageUrl])
+
+  return (
+    <section className="py-24 bg-card overflow-hidden">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+        {/* Top: split layout — image left, headline + stats right */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20">
+          {/* Left: image with overlaid stat counter */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.7 }}
+            className="relative"
+          >
+            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
+              <Image
+                src={currentImage}
+                alt="Precisión de la ingeniería japonesa"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                onError={() => setCurrentImage(DEFAULT_IMAGE)}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-transparent" />
+
+              {/* Stat counter overlay — bottom of image */}
+              <div className="absolute bottom-0 left-0 right-0 p-5 grid grid-cols-2 gap-px bg-black/30 backdrop-blur-sm">
+                {stats.map((stat) => (
+                  <div key={stat.label} className="text-center py-3 px-4">
+                    <div className="font-serif text-2xl font-bold text-white">{stat.value}</div>
+                    <div className="text-[10px] text-white/55 uppercase tracking-wider mt-0.5">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Right: headline + text */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.1 }}
           >
             <span className="text-sm text-primary font-medium tracking-widest uppercase">
               La Diferencia Japonesa
             </span>
-            <h2 className="font-serif text-4xl md:text-5xl tracking-wider mt-4 mb-4">
+            <h2 className="font-serif text-4xl md:text-5xl tracking-wider mt-4 mb-6">
               ¿POR QUÉ <span className="text-green-gradient">MAQUINARIA JAPONESA?</span>
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              La maquinaria japonesa es reconocida mundialmente por su excepcional calidad 
-              de fabricación, durabilidad y bajo coste de mantenimiento.
+            <p className="text-muted-foreground leading-relaxed mb-8">
+              La maquinaria japonesa es reconocida mundialmente por su calidad de fabricación excepcional,
+              durabilidad legendaria y bajo coste operativo. En Japón, cada máquina se mantiene con
+              estándares industriales impecables, lo que garantiza equipos en condiciones superiores
+              al resto del mercado.
             </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button asChild className="gap-2 bg-primary text-white hover:bg-primary/90">
+                <Link href="/por-que-maquinaria-japonesa">
+                  Descubrir Más
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="gap-2 border-border hover:border-primary">
+                <Link href="/catalogo">
+                  Ver Catálogo
+                </Link>
+              </Button>
+            </div>
           </motion.div>
         </div>
 
-        {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Bottom: 6-feature icon grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              transition={{ duration: 0.5, delay: index * 0.07 }}
               className="group"
             >
-              <div className="p-6 rounded-lg border border-border bg-background hover:border-primary/30 transition-all duration-300 h-full">
-                {/* Icon */}
-                <div className="w-14 h-14 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                  <feature.icon className="w-7 h-7 text-primary" />
+              <div className="p-6 rounded-xl border border-border bg-background hover:border-primary/40 hover:shadow-md hover:shadow-primary/5 transition-all duration-300 h-full">
+                <div className="w-12 h-12 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                  <feature.icon className="w-6 h-6 text-primary" />
                 </div>
-
-                {/* Content */}
-                <h3 className="font-serif text-xl tracking-wide text-foreground mb-3">
+                <h3 className="font-serif text-lg tracking-wide text-foreground mb-2">
                   {feature.title}
                 </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
@@ -99,21 +159,6 @@ export function WhyJapaneseSection() {
           ))}
         </div>
 
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="text-center mt-12"
-        >
-          <Button asChild size="lg" variant="outline" className="border-primary/30 hover:border-primary">
-            <Link href="/por-que-maquinaria-japonesa">
-              Descubre Más
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Link>
-          </Button>
-        </motion.div>
       </div>
     </section>
   )

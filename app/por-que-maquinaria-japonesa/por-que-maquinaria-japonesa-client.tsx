@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -18,7 +19,18 @@ import {
   ArrowRight,
 } from "lucide-react"
 
-export function PorQueJaponesaClient() {
+const DEFAULT_HERO_IMAGE = "/images/hero-forklift.jpg"
+
+interface PorQueJaponesaClientProps {
+  imageUrl?: string | null
+}
+
+export function PorQueJaponesaClient({ imageUrl }: PorQueJaponesaClientProps) {
+  const [heroImage, setHeroImage] = useState(imageUrl || DEFAULT_HERO_IMAGE)
+
+  useEffect(() => {
+    setHeroImage(imageUrl || DEFAULT_HERO_IMAGE)
+  }, [imageUrl])
   const advantages = [
     {
       icon: Award,
@@ -84,11 +96,12 @@ export function PorQueJaponesaClient() {
         {/* Cinematic Hero */}
         <section className="relative min-h-[460px] md:min-h-[540px] flex items-center overflow-hidden">
           <Image
-            src="/images/hero-forklift.jpg"
+            src={heroImage}
             alt="Carretilla elevadora japonesa — ingeniería de precisión"
             fill
             className="object-cover object-center"
             priority
+            onError={() => setHeroImage(DEFAULT_HERO_IMAGE)}
           />
           {/* Centered dark overlay — equal legibility across full width */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/50 to-black/70" />
@@ -108,7 +121,7 @@ export function PorQueJaponesaClient() {
                 </Badge>
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading text-white mb-6">
                   ¿Por Qué Elegir{" "}
-                  <span className="text-primary">Maquinaria Japonesa</span>?
+                  <span className="text-[var(--hero-accent)]">Maquinaria Japonesa</span>?
                 </h1>
                 <p className="text-lg text-white/75 leading-relaxed mb-8 max-w-2xl mx-auto">
                   Japón es sinónimo de calidad, innovación y excelencia en la
@@ -249,7 +262,7 @@ export function PorQueJaponesaClient() {
               >
                 <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
                   <Image
-                    src="/images/hero-light.jpg"
+                    src="/images/homepage-why-japanese.jpg"
                     alt="Fabricación japonesa de precisión"
                     fill
                     className="object-cover object-center"

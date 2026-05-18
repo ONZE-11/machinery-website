@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { brand } from '@/lib/config/brand'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Phone } from 'lucide-react'
+import { Menu, X, Phone, LayoutDashboard } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 const navigation = [
@@ -17,11 +17,29 @@ const navigation = [
   { name: '¿Por Qué Japonesa?', href: '/por-que-maquinaria-japonesa' },
 ]
 
+// Pages that have a full-bleed hero image — header starts transparent on these
+const HERO_PAGES = new Set([
+  '/',
+  '/catalogo',
+  '/marcas',
+  '/sobre-nosotros',
+  '/por-que-maquinaria-japonesa',
+])
+
 export function Header() {
-  const [isScrolled, setIsScrolled] = useState(false)
+  const pathname = usePathname()
+  const hasHero = HERO_PAGES.has(pathname)
+  const [isScrolled, setIsScrolled] = useState(!hasHero)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [phone, setPhone] = useState('')
-  const pathname = usePathname()
+  const [isAdmin, setIsAdmin] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/auth/is-admin')
+      .then((r) => r.json())
+      .then((data) => { if (data?.isAdmin) setIsAdmin(true) })
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     fetch('/api/settings')
@@ -34,19 +52,24 @@ export function Header() {
   }, [])
 
   useEffect(() => {
+    if (!hasHero) {
+      setIsScrolled(true)
+      return
+    }
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 40)
     }
+    handleScroll()
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [hasHero])
 
   return (
     <header
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
         isScrolled
-          ? 'bg-white/[0.98] backdrop-blur-md border-b border-border/60 shadow-[0_1px_20px_rgba(0,0,0,0.06)]'
+          ? 'bg-white border-b border-border/60 shadow-[0_1px_20px_rgba(0,0,0,0.06)]'
           : 'bg-gradient-to-b from-black/50 to-transparent'
       )}
     >
@@ -142,6 +165,28 @@ export function Header() {
               isScrolled ? 'bg-border' : 'bg-white/20'
             )} />
 
+            {/* Admin link — only visible to admins */}
+            {isAdmin && (
+              <>
+                <Link
+                  href="/admin"
+                  className={cn(
+                    'flex items-center gap-1.5 text-[12px] font-medium transition-colors duration-200',
+                    isScrolled
+                      ? 'text-muted-foreground hover:text-primary'
+                      : 'text-white/60 hover:text-white'
+                  )}
+                >
+                  <LayoutDashboard className="w-3.5 h-3.5" />
+                  <span>Admin</span>
+                </Link>
+                <div className={cn(
+                  'w-px h-5 transition-colors duration-300',
+                  isScrolled ? 'bg-border' : 'bg-white/20'
+                )} />
+              </>
+            )}
+
             {/* CTA */}
             <Button
               asChild
@@ -208,6 +253,17 @@ export function Header() {
                   </Link>
                 )
               })}
+
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-2 px-3 py-2.5 text-[14px] font-medium rounded-md text-foreground/80 hover:text-primary hover:bg-primary/5 transition-colors"
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                  Admin Panel
+                </Link>
+              )}
 
               <div className="pt-3 pb-1">
                 <Button

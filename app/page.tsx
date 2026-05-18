@@ -1,3 +1,6 @@
+// Always render server-side so admin changes appear immediately without a redeploy
+export const dynamic = 'force-dynamic'
+
 import { Header, Footer, WhatsAppButton } from "@/components/layout"
 import {
   HeroSection,
@@ -13,25 +16,32 @@ import {
   getActiveCategories,
   getActiveBrands,
   getActiveFAQs,
+  getHomepageSection,
 } from "@/lib/supabase/queries"
 
 export default async function HomePage() {
-  const [products, categories, brands, faqs] = await Promise.all([
+  const [products, categories, brands, faqs, heroSection, whySection] = await Promise.all([
     getFeaturedProducts(6),
     getActiveCategories(),
     getActiveBrands(),
     getActiveFAQs(5),
+    getHomepageSection('hero'),
+    getHomepageSection('why_japanese'),
   ])
+
+  // Priority: custom_image (admin override) → image (permanent default) → component fallback
+  const heroImageUrl = heroSection?.custom_image || heroSection?.image || null
+  const whyImageUrl  = whySection?.custom_image  || whySection?.image  || null
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <main>
-        <HeroSection />
+        <HeroSection imageUrl={heroImageUrl} />
         <FeaturedProducts products={products} />
         <CategoriesSection categories={categories} />
         <BrandsSection brands={brands} />
-        <WhyJapaneseSection />
+        <WhyJapaneseSection imageUrl={whyImageUrl} />
         <FAQSection faqs={faqs} />
         <CTASection />
       </main>

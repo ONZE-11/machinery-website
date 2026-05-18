@@ -1,17 +1,18 @@
 // Public query helpers — safe in server components, generateStaticParams, and sitemap.
 // Uses createBrowserClient (no cookies, no request scope) so it works at build time.
-import { createClient } from "./client"
-import type { Product, Category, Brand, FAQ, SocialLink } from "@/types/database"
+import { createStaticClient } from "@/lib/supabase/static"
+import { createAdminClient } from "@/lib/supabase/server"
+import type { Product, Category, Brand, FAQ, SocialLink, HomepageSection } from "@/types/database"
 
 // ─── Products ────────────────────────────────────────────────────────────────
 
 export async function getPublishedProducts(opts?: { limit?: number }): Promise<Product[]> {
-  const sb = await createClient()
+  const sb = await createStaticClient()
   if (!sb) return []
   let q = sb
     .from("products")
     .select("*, category:categories(*), brand:brands(*)")
-    .eq("status", "published")
+    .in("status", ["published", "reserved", "sold"])
     .order("created_at", { ascending: false })
   if (opts?.limit) q = q.limit(opts.limit)
   const { data } = await q
@@ -19,12 +20,12 @@ export async function getPublishedProducts(opts?: { limit?: number }): Promise<P
 }
 
 export async function getFeaturedProducts(limit = 6): Promise<Product[]> {
-  const sb = await createClient()
+  const sb = await createStaticClient()
   if (!sb) return []
   const { data } = await sb
     .from("products")
     .select("*, category:categories(*), brand:brands(*)")
-    .eq("status", "published")
+    .in("status", ["published", "reserved", "sold"])
     .eq("featured", true)
     .order("created_at", { ascending: false })
     .limit(limit)
@@ -32,24 +33,24 @@ export async function getFeaturedProducts(limit = 6): Promise<Product[]> {
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
-  const sb = await createClient()
+  const sb = await createStaticClient()
   if (!sb) return null
   const { data } = await sb
     .from("products")
     .select("*, category:categories(*), brand:brands(*)")
     .eq("slug", slug)
-    .eq("status", "published")
+    .in("status", ["published", "reserved", "sold"])
     .maybeSingle()
   return data as unknown as Product | null
 }
 
 export async function getPublishedProductSlugs(): Promise<string[]> {
-  const sb = await createClient()
+  const sb = await createStaticClient()
   if (!sb) return []
   const { data } = await sb
     .from("products")
     .select("slug")
-    .eq("status", "published")
+    .in("status", ["published", "reserved", "sold"])
   return (data ?? []).map((r: { slug: string }) => r.slug)
 }
 
@@ -58,12 +59,12 @@ export async function getRelatedProducts(
   excludeId: string,
   limit = 3
 ): Promise<Product[]> {
-  const sb = await createClient()
+  const sb = await createStaticClient()
   if (!sb) return []
   const { data } = await sb
     .from("products")
     .select("*, category:categories(*), brand:brands(*)")
-    .eq("status", "published")
+    .in("status", ["published", "reserved", "sold"])
     .eq("category_id", categoryId)
     .neq("id", excludeId)
     .limit(limit)
@@ -72,12 +73,12 @@ export async function getRelatedProducts(
 
 /** Minimal product list for UI dropdowns (contact form, etc.) */
 export async function getProductsBasic(): Promise<Array<{ slug: string; title: string; model: string | null }>> {
-  const sb = await createClient()
+  const sb = await createStaticClient()
   if (!sb) return []
   const { data } = await sb
     .from("products")
     .select("slug, title, model")
-    .eq("status", "published")
+    .in("status", ["published", "reserved", "sold"])
     .order("title", { ascending: true })
   return (data ?? []) as Array<{ slug: string; title: string; model: string | null }>
 }
@@ -85,7 +86,7 @@ export async function getProductsBasic(): Promise<Array<{ slug: string; title: s
 // ─── Categories ──────────────────────────────────────────────────────────────
 
 export async function getActiveCategories(): Promise<Category[]> {
-  const sb = await createClient()
+  const sb = await createStaticClient()
   if (!sb) return []
   const { data } = await sb
     .from("categories")
@@ -98,7 +99,7 @@ export async function getActiveCategories(): Promise<Category[]> {
 // ─── Brands ──────────────────────────────────────────────────────────────────
 
 export async function getActiveBrands(): Promise<Brand[]> {
-  const sb = await createClient()
+  const sb = await createStaticClient()
   if (!sb) return []
   const { data } = await sb
     .from("brands")
@@ -111,7 +112,7 @@ export async function getActiveBrands(): Promise<Brand[]> {
 // ─── FAQ ─────────────────────────────────────────────────────────────────────
 
 export async function getActiveFAQs(limit?: number): Promise<FAQ[]> {
-  const sb = await createClient()
+  const sb = await createStaticClient()
   if (!sb) return []
   let q = sb
     .from("faq")
@@ -124,10 +125,27 @@ export async function getActiveFAQs(limit?: number): Promise<FAQ[]> {
   return (data ?? []) as FAQ[]
 }
 
+// ─── Homepage sections ────────────────────────────────────────────────────────
+
+export async function getHomepageSection(key: string): Promise<HomepageSection | null> {
+  // Use admin client to bypass potential RLS restrictions on homepage_sections.
+  // active filter is intentionally omitted — the hero section should always be fetched.
+  const sb = await createAdminClient()
+  if (!sb) return null
+  const { data, error } = await sb
+    .from("homepage_sections")
+    .select("*")
+    .eq("section_key", key)
+    .maybeSingle()
+  if (error) console.error("[getHomepageSection] DB error:", error.message)
+  console.log(`[getHomepageSection] key="${key}" image="${(data as HomepageSection | null)?.image ?? "null"}"`)
+  return data as HomepageSection | null
+}
+
 // ─── Contact settings ─────────────────────────────────────────────────────────
 
 export async function getContactSettings(): Promise<Record<string, string>> {
-  const sb = await createClient()
+  const sb = await createStaticClient()
   if (!sb) return {}
   const { data } = await sb
     .from("contact_settings")
@@ -143,7 +161,7 @@ export async function getContactSettings(): Promise<Record<string, string>> {
 // ─── Social links ─────────────────────────────────────────────────────────────
 
 export async function getActiveSocialLinks(): Promise<SocialLink[]> {
-  const sb = await createClient()
+  const sb = await createStaticClient()
   if (!sb) return []
   const { data } = await sb
     .from("social_links")

@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -17,7 +18,18 @@ import {
   ArrowRight,
 } from "lucide-react"
 
-export function SobreNosotrosClient() {
+const DEFAULT_HERO_IMAGE = "/images/about-team.jpg"
+
+interface SobreNosotrosClientProps {
+  imageUrl?: string | null
+}
+
+export function SobreNosotrosClient({ imageUrl }: SobreNosotrosClientProps) {
+  const [heroImage, setHeroImage] = useState(imageUrl || DEFAULT_HERO_IMAGE)
+
+  useEffect(() => {
+    setHeroImage(imageUrl || DEFAULT_HERO_IMAGE)
+  }, [imageUrl])
   const stats = [
     { value: "15+", label: "Años de experiencia" },
     { value: "500+", label: "Máquinas vendidas" },
@@ -57,11 +69,12 @@ export function SobreNosotrosClient() {
         {/* Cinematic Hero */}
         <section className="relative min-h-[480px] md:min-h-[560px] flex items-center overflow-hidden">
           <Image
-            src="/images/about-team.jpg"
+            src={heroImage}
             alt="Equipo especialista en maquinaria japonesa"
             fill
             className="object-cover object-center"
             priority
+            onError={() => setHeroImage(DEFAULT_HERO_IMAGE)}
           />
           {/* Directional overlay — dark on left for text legibility */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/65 to-black/25" />
@@ -82,7 +95,7 @@ export function SobreNosotrosClient() {
                 </Badge>
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading text-white mb-6">
                   Especialistas en{" "}
-                  <span className="text-primary">Maquinaria Japonesa</span>
+                  <span className="text-[var(--hero-accent)]">Maquinaria Japonesa</span>
                 </h1>
                 <p className="text-lg text-white/75 leading-relaxed mb-8 max-w-lg">
                   Desde 2009, nos dedicamos a importar la mejor maquinaria

@@ -1,6 +1,9 @@
+export const dynamic = 'force-dynamic'
+
 import type { Metadata } from "next"
 import { Header, Footer, WhatsAppButton } from "@/components/layout"
 import { PorQueJaponesaClient } from "./por-que-maquinaria-japonesa-client"
+import { getHomepageSection } from "@/lib/supabase/queries"
 
 export const metadata: Metadata = {
   title: "¿Por Qué Maquinaria Japonesa? | Ventajas y Beneficios",
@@ -20,11 +23,14 @@ export const metadata: Metadata = {
   },
 }
 
-export default function PorQueJaponesaPage() {
+export default async function PorQueJaponesaPage() {
+  const section = await getHomepageSection('hero_secondary')
+  const imageUrl = section?.custom_image || section?.image || null
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <PorQueJaponesaClient />
+      <PorQueJaponesaClient imageUrl={imageUrl} />
       <Footer />
       <WhatsAppButton />
     </div>

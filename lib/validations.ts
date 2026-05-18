@@ -227,7 +227,10 @@ export const homepageSectionSchema = z.object({
   title: z.string().max(200).nullable().optional(),
   subtitle: z.string().max(300).nullable().optional(),
   content: z.string().max(5000).nullable().optional(),
+  /** Permanent default — accepted in schema but stripped from PATCH updates in the API. */
   image: z.string().url('URL de imagen no válida').nullable().optional(),
+  /** Admin-uploaded override image. */
+  custom_image: z.string().url('URL de imagen no válida').nullable().optional(),
   cta_text: z.string().max(100).nullable().optional(),
   cta_link: z.string().max(500).nullable().optional(),
   

@@ -1,6 +1,9 @@
+export const dynamic = 'force-dynamic'
+
 import type { Metadata } from "next"
 import { Header, Footer, WhatsAppButton } from "@/components/layout"
 import { SobreNosotrosClient } from "./sobre-nosotros-client"
+import { getHomepageSection } from "@/lib/supabase/queries"
 
 export const metadata: Metadata = {
   title: "Sobre Nosotros | Especialistas en Maquinaria Japonesa",
@@ -20,11 +23,14 @@ export const metadata: Metadata = {
   },
 }
 
-export default function SobreNosotrosPage() {
+export default async function SobreNosotrosPage() {
+  const section = await getHomepageSection('trust')
+  const imageUrl = section?.custom_image || section?.image || null
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <SobreNosotrosClient />
+      <SobreNosotrosClient imageUrl={imageUrl} />
       <Footer />
       <WhatsAppButton />
     </div>

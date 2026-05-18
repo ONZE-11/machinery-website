@@ -7,8 +7,23 @@ import { ArrowRight, ChevronDown, MessageCircle } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 
-export function HeroSection() {
+const DEFAULT_HERO_IMAGE = '/images/homepage-hero.jpg'
+
+interface HeroSectionProps {
+  imageUrl?: string | null
+}
+
+export function HeroSection({ imageUrl }: HeroSectionProps) {
   const [whatsappNumber, setWhatsappNumber] = useState('34601080799')
+  const [currentImage, setCurrentImage] = useState(imageUrl || DEFAULT_HERO_IMAGE)
+  const [imgError, setImgError] = useState(false)
+
+  useEffect(() => {
+    const next = imageUrl || DEFAULT_HERO_IMAGE
+    console.log('[HeroSection] imageUrl prop:', imageUrl ?? 'null', '→ using:', next)
+    setCurrentImage(next)
+    setImgError(false)
+  }, [imageUrl])
 
   useEffect(() => {
     fetch('/api/settings')
@@ -23,16 +38,37 @@ export function HeroSection() {
 
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Hola%2C+me+interesa+vuestra+maquinaria+japonesa`
 
+  // imgError flag: if next/image fails (e.g. blocked domain), fall through to plain <img>
+  const handleImgError = () => {
+    console.warn('[HeroSection] Image failed to load:', currentImage)
+    if (currentImage !== DEFAULT_HERO_IMAGE) {
+      setCurrentImage(DEFAULT_HERO_IMAGE)
+    } else {
+      setImgError(true)
+    }
+  }
+
   return (
     <section className="relative w-full h-screen overflow-hidden pt-16">
-      <Image
-        src="/images/hero-main.jpg"
-        alt="Maquinaria japonesa premium"
-        fill
-        className="object-cover object-center"
-        priority
-        sizes="100vw"
-      />
+      {imgError ? (
+        // Plain <img> fallback — bypasses next/image optimization pipeline entirely.
+        // If this loads but <Image> didn't, the fix is next.config remotePatterns.
+        <img
+          src={DEFAULT_HERO_IMAGE}
+          alt="Maquinaria japonesa premium"
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+      ) : (
+        <Image
+          src={currentImage}
+          alt="Maquinaria japonesa premium"
+          fill
+          className="object-cover object-center"
+          priority
+          sizes="100vw"
+          onError={handleImgError}
+        />
+      )}
 
       {/* Cinematic overlay — darkens top/bottom, lighter in the middle */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/40 to-black/70" />
@@ -53,7 +89,7 @@ export function HeroSection() {
 
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-white leading-tight mb-6">
             Maquinaria{' '}
-            <span className="text-primary">Japonesa</span>
+            <span className="text-[var(--hero-accent)]">Japonesa</span>
           </h1>
 
           <p className="text-lg sm:text-xl text-white/70 mb-8 font-light">

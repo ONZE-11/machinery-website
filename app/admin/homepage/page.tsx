@@ -59,12 +59,17 @@ export default function HomepageSectionsPage() {
               <CardContent className="p-5">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-3 flex-1 min-w-0">
-                    {section.image && (
-                      <img
-                        src={section.image}
-                        alt={section.title ?? section.section_key}
-                        className="w-16 h-12 object-cover rounded shrink-0"
-                      />
+                    {(section.custom_image || section.image) && (
+                      <div className="relative shrink-0">
+                        <img
+                          src={section.custom_image || section.image!}
+                          alt={section.title ?? section.section_key}
+                          className="w-16 h-12 object-cover rounded"
+                        />
+                        {section.custom_image && (
+                          <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-primary border-2 border-background" title="Custom image active" />
+                        )}
+                      </div>
                     )}
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 mb-1">

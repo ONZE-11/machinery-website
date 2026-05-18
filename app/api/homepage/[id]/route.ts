@@ -6,14 +6,13 @@ import { homepageSectionSchema } from "@/lib/validations"
 
 type Ctx = { params: Promise<{ id: string }> }
 
-// All pages that may render homepage section images
-const REVALIDATE_PATHS = [
-  '/',
-  '/por-que-maquinaria-japonesa',
-  '/sobre-nosotros',
-  '/contacto',
-  '/catalogo',
-]
+// Pages revalidated when each section_key is saved
+const SECTION_PATHS: Record<string, string[]> = {
+  hero:           ['/'],
+  why_japanese:   ['/', '/por-que-maquinaria-japonesa'],
+  hero_secondary: ['/contacto'],
+  trust:          ['/sobre-nosotros'],
+}
 
 export async function GET(_req: NextRequest, { params }: Ctx) {
   const { id } = await params
@@ -43,6 +42,14 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
     return NextResponse.json({ error: "Validation failed", details: result.error.flatten() }, { status: 422 })
   }
 
+  // Fetch section_key to know which pages to revalidate
+  const { data: existing } = await supabase
+    .from("homepage_sections")
+    .select("section_key")
+    .eq("id", id)
+    .single()
+  const sectionKey = (existing as { section_key?: string } | null)?.section_key ?? ""
+
   const { data, error } = await supabase
     .from("homepage_sections")
     .update(result.data)
@@ -52,7 +59,8 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  REVALIDATE_PATHS.forEach((p) => revalidatePath(p))
+  const paths = SECTION_PATHS[sectionKey] ?? ['/']
+  paths.forEach((p) => revalidatePath(p))
 
   return NextResponse.json(data)
 }

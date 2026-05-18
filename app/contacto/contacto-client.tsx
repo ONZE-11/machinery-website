@@ -27,10 +27,14 @@ interface Props {
   products: ProductBasic[]
 }
 
+// Sentinel value for "no specific product" in the Select component
+const NO_PRODUCT = "__general__"
+
 export function ContactoPageClient({ settings, products }: Props) {
   const searchParams = useSearchParams()
   const productSlug = searchParams.get("producto")
-  const selectedProduct = productSlug
+  // The initial product from URL — used only for defaultValues, not reactive
+  const initialProduct = productSlug
     ? products.find((p) => p.slug === productSlug) ?? null
     : null
 
@@ -47,22 +51,30 @@ export function ContactoPageClient({ settings, products }: Props) {
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
-      company: "",
-      // Subject pre-filled with product name only in the subject field
-      subject: selectedProduct ? `Consulta: ${selectedProduct.title}` : "",
-      // Message starts clean — product is already shown in the banner & subject
-      message: "",
-      product_interest: selectedProduct?.slug ?? "",
+      name:             "",
+      email:            "",
+      phone:            "",
+      company:          "",
+      subject:          "",          // user fills in their own subject — no product name injection
+      message:          "",          // user writes their own message
+      product_interest: initialProduct?.slug ?? "",  // slug used internally for lookup
       privacy_accepted: false,
     },
   })
 
+  // Resolve current product_interest slug → product object (reactive)
+  const productInterestValue = watch("product_interest")
+  const activeProduct = productInterestValue
+    ? products.find((p) => p.slug === productInterestValue) ?? null
+    : null
+
   const onSubmit: SubmitHandler<ContactFormData> = async (data) => {
-    // Extra guard — react-hook-form + zod should prevent this, but belt-and-suspenders
     if (!data.privacy_accepted) return
+
+    // Resolve slug → human-readable title for admin inbox
+    const productTitle = data.product_interest
+      ? products.find((p) => p.slug === data.product_interest)?.title ?? data.product_interest
+      : undefined
 
     setIsSubmitting(true)
     setSubmitStatus(null)
@@ -70,7 +82,10 @@ export function ContactoPageClient({ settings, products }: Props) {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          product_interest: productTitle,   // store readable name, not slug
+        }),
       })
       if (res.ok) {
         setSubmitStatus("success")
@@ -85,11 +100,11 @@ export function ContactoPageClient({ settings, products }: Props) {
     }
   }
 
-  const settingsAddress = settings.address ?? ""
-  const settingsPhone   = settings.phone   ?? ""
+  const settingsAddress  = settings.address  ?? ""
+  const settingsPhone    = settings.phone    ?? ""
   const settingsWhatsapp = settings.whatsapp ?? ""
-  const settingsEmail   = settings.email   ?? ""
-  const settingsHours   = settings.hours   ?? ""
+  const settingsEmail    = settings.email    ?? ""
+  const settingsHours    = settings.hours    ?? ""
 
   return (
     <main>
@@ -118,7 +133,7 @@ export function ContactoPageClient({ settings, products }: Props) {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
 
-            {/* Contact info sidebar */}
+            {/* Sidebar */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -194,7 +209,7 @@ export function ContactoPageClient({ settings, products }: Props) {
               </div>
             </motion.div>
 
-            {/* Form column */}
+            {/* Form */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -206,13 +221,18 @@ export function ContactoPageClient({ settings, products }: Props) {
                   Envíenos un Mensaje
                 </h2>
 
-                {/* Product prefill banner — shown once, clearly */}
-                {selectedProduct && (
+                {/* Dynamic product banner — reacts to what's selected in the dropdown */}
+                {activeProduct && (
                   <div className="mb-6 flex items-center gap-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
                     <Package className="h-5 w-5 text-primary shrink-0" />
                     <div className="min-w-0">
-                      <p className="text-xs text-muted-foreground">Consulta sobre el producto:</p>
-                      <p className="text-sm font-semibold text-foreground truncate">{selectedProduct.title}</p>
+                      <p className="text-xs text-muted-foreground">Producto de interés seleccionado:</p>
+                      <p className="text-sm font-semibold text-foreground truncate">
+                        {activeProduct.title}
+                        {activeProduct.model && (
+                          <span className="font-normal text-muted-foreground ml-1">— {activeProduct.model}</span>
+                        )}
+                      </p>
                     </div>
                   </div>
                 )}
@@ -243,23 +263,17 @@ export function ContactoPageClient({ settings, products }: Props) {
                     <div>
                       <Label htmlFor="name">Nombre completo <span className="text-red-500">*</span></Label>
                       <Input id="name" {...register("name")} className="mt-2" placeholder="Su nombre" />
-                      {errors.name && (
-                        <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
-                      )}
+                      {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
                     </div>
                     <div>
                       <Label htmlFor="email">Email <span className="text-red-500">*</span></Label>
                       <Input id="email" type="email" {...register("email")} className="mt-2" placeholder="su@email.com" />
-                      {errors.email && (
-                        <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-                      )}
+                      {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
                     </div>
                     <div>
                       <Label htmlFor="phone">Teléfono</Label>
                       <Input id="phone" {...register("phone")} className="mt-2" placeholder="+34 601 080 799" />
-                      {errors.phone && (
-                        <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
-                      )}
+                      {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>}
                     </div>
                     <div>
                       <Label htmlFor="company">Empresa</Label>
@@ -267,18 +281,24 @@ export function ContactoPageClient({ settings, products }: Props) {
                     </div>
                   </div>
 
-                  {/* Product interest */}
+                  {/* Product select — value is slug internally, displayed as title */}
                   <div>
-                    <Label htmlFor="product_interest">Producto de interés</Label>
+                    <Label>Producto de interés</Label>
                     <Select
-                      value={watch("product_interest")}
-                      onValueChange={(value) => setValue("product_interest", value, { shouldDirty: true })}
+                      value={productInterestValue || NO_PRODUCT}
+                      onValueChange={(value) => {
+                        setValue(
+                          "product_interest",
+                          value === NO_PRODUCT ? "" : value,
+                          { shouldDirty: true }
+                        )
+                      }}
                     >
-                      <SelectTrigger className="mt-2" id="product_interest">
+                      <SelectTrigger className="mt-2">
                         <SelectValue placeholder="Seleccione un producto (opcional)" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="general">Consulta general</SelectItem>
+                        <SelectItem value={NO_PRODUCT}>Consulta general</SelectItem>
                         {products.map((p) => (
                           <SelectItem key={p.slug} value={p.slug}>
                             {p.title}
@@ -292,9 +312,7 @@ export function ContactoPageClient({ settings, products }: Props) {
                   <div>
                     <Label htmlFor="subject">Asunto <span className="text-red-500">*</span></Label>
                     <Input id="subject" {...register("subject")} className="mt-2" placeholder="Asunto de su consulta" />
-                    {errors.subject && (
-                      <p className="text-red-500 text-sm mt-1">{errors.subject.message}</p>
-                    )}
+                    {errors.subject && <p className="text-red-500 text-sm mt-1">{errors.subject.message}</p>}
                   </div>
 
                   {/* Message */}
@@ -306,9 +324,7 @@ export function ContactoPageClient({ settings, products }: Props) {
                       className="mt-2 min-h-[150px]"
                       placeholder="Escriba su mensaje aquí..."
                     />
-                    {errors.message && (
-                      <p className="text-red-500 text-sm mt-1">{errors.message.message}</p>
-                    )}
+                    {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message.message}</p>}
                   </div>
 
                   {/* Privacy checkbox */}
@@ -330,17 +346,13 @@ export function ContactoPageClient({ settings, products }: Props) {
                         <span className="text-red-500">*</span>
                       </Label>
                     </div>
+                    {/* Error directly below the checkbox row */}
                     {errors.privacy_accepted && (
                       <p className="text-red-500 text-sm pl-7">{errors.privacy_accepted.message}</p>
                     )}
                   </div>
 
-                  <Button
-                    type="submit"
-                    size="lg"
-                    className="w-full gap-2"
-                    disabled={isSubmitting}
-                  >
+                  <Button type="submit" size="lg" className="w-full gap-2" disabled={isSubmitting}>
                     {isSubmitting ? (
                       "Enviando..."
                     ) : (

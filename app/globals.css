@@ -23,8 +23,9 @@
   
   /* Primary Action: Deep Forest Green */
   --primary: oklch(0.32 0.09 146);         /* #1F4D3A - Deep Forest Green */
-  --primary-foreground: oklch(0.98 0 0);   /* White on green */
-  
+  --primary-foreground: oklch(97.913% 0.00011 271.152);   /* White on green */
+  --hero-accent: #014f01;                  /* Hero heading accent — applies only to "Japonesa/Japonesas" spans in Hero sections */
+
   /* Secondary: Light Gray */
   --secondary: oklch(0.94 0 0);            /* #E5E7EB - Light steel gray */
   --secondary-foreground: oklch(0.20 0 0);
@@ -84,6 +85,7 @@
   --popover-foreground: oklch(0.10 0 0);
   --primary: oklch(0.32 0.09 146);
   --primary-foreground: oklch(0.98 0 0);
+  --hero-accent: #3A4F3A;
   --secondary: oklch(0.94 0 0);
   --secondary-foreground: oklch(0.20 0 0);
   --muted: oklch(0.90 0 0);

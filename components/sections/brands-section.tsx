@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import type { Brand } from '@/types/database'
@@ -10,13 +11,11 @@ interface BrandsSectionProps {
 }
 
 export function BrandsSection({ brands }: BrandsSectionProps) {
-  const displayBrands = brands
-
   return (
     <section className="py-24 bg-background">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-14">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -30,47 +29,70 @@ export function BrandsSection({ brands }: BrandsSectionProps) {
               MARCAS <span className="text-green-gradient">JAPONESAS</span>
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Trabajamos exclusivamente con las marcas japonesas más prestigiosas del mundo. 
+              Trabajamos exclusivamente con los fabricantes japoneses más prestigiosos.
               Calidad, fiabilidad y durabilidad garantizadas.
             </p>
           </motion.div>
         </div>
 
-        {/* Brands Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          {displayBrands.map((brand, index) => (
-            <motion.div
-              key={brand.id}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-            >
-              <Link href={`/marcas/${brand.slug}`}>
-                <div className="group relative p-8 rounded-lg border border-border bg-card hover:border-primary/30 transition-all duration-300 flex flex-col items-center justify-center text-center">
-                  {/* Logo Placeholder */}
-                  <div className="w-20 h-20 rounded-lg bg-secondary flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
-                    <span className="font-serif text-2xl text-primary">{brand.name.charAt(0)}</span>
-                  </div>
-                  
-                  {/* Brand Name */}
-                  <h3 className="font-serif text-xl tracking-wide text-foreground group-hover:text-primary transition-colors">
-                    {brand.name}
-                  </h3>
-                  
-                  {/* Founded Year */}
-                  {brand.founded_year && (
-                    <span className="text-xs text-muted-foreground mt-1">
-                      Desde {brand.founded_year}
-                    </span>
-                  )}
+        {/* Image-backed brand grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {brands.map((brand, index) => {
+            const imageSrc = brand.hero_image || `/images/brands/brand-${brand.slug}.jpg`
+            return (
+              <motion.div
+                key={brand.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.07 }}
+              >
+                <Link href={`/catalogo?marca=${brand.slug}`} className="block">
+                  <div className="group relative h-48 md:h-56 rounded-xl overflow-hidden">
+                    {/* Background image */}
+                    <Image
+                      src={imageSrc}
+                      alt={`Maquinaria ${brand.name}`}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      sizes="(max-width: 768px) 50vw, 33vw"
+                    />
+                    {/* Dark gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10" />
+                    {/* Hover tint */}
+                    <div className="absolute inset-0 bg-primary/25 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                  {/* Hover Effect */}
-                  <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </div>
-              </Link>
-            </motion.div>
-          ))}
+                    {/* Content */}
+                    <div className="absolute inset-0 p-4 flex flex-col justify-between">
+                      {/* Country badge */}
+                      <div className="flex justify-end">
+                        <span className="text-[10px] font-medium tracking-widest text-white/50 uppercase">
+                          🇯🇵 {brand.country || 'Japón'}
+                        </span>
+                      </div>
+
+                      {/* Brand name + year + CTA */}
+                      <div className="flex items-end justify-between gap-2">
+                        <div>
+                          <h3 className="font-serif text-3xl md:text-4xl tracking-widest text-white leading-none">
+                            {brand.name.toUpperCase()}
+                          </h3>
+                          {brand.founded_year && (
+                            <p className="text-white/40 text-[11px] mt-1.5 tracking-widest uppercase">
+                              Desde {brand.founded_year}
+                            </p>
+                          )}
+                        </div>
+                        <div className="shrink-0 w-8 h-8 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm flex items-center justify-center group-hover:bg-primary group-hover:border-primary transition-all duration-300">
+                          <ArrowRight className="w-3.5 h-3.5 text-white group-hover:translate-x-0.5 transition-transform" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            )
+          })}
         </div>
 
         {/* View All CTA */}
@@ -78,8 +100,8 @@ export function BrandsSection({ brands }: BrandsSectionProps) {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="text-center mt-12"
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="text-center mt-10"
         >
           <Link
             href="/marcas"

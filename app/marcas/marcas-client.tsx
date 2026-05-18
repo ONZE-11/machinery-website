@@ -15,11 +15,11 @@ interface Props {
 
 export function MarcasPageClient({ brands, products }: Props) {
   return (
-    <main className="pt-16">
+    <main>
       {/* Dark Cinematic Hero */}
       <section className="relative h-96 md:h-[500px] lg:h-[600px] bg-cover bg-center flex items-center justify-center overflow-hidden">
         <Image
-          src="/images/hero-forklift.jpg"
+          src="/images/brands-hero.jpg"
           alt="Maquinaria japonesa de precisión industrial"
           fill
           className="object-cover object-center"
@@ -33,7 +33,7 @@ export function MarcasPageClient({ brands, products }: Props) {
               Excelencia Japonesa
             </Badge>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-4">
-              Marcas <span className="text-[var(--primary)]">Japonesas</span> Premium
+              Marcas <span className="text-[var(--hero-accent)]">Japonesas</span> Premium
             </h1>
             <p className="text-lg text-white/80">Trabajamos con los fabricantes más prestigiosos de Japón</p>
           </motion.div>
@@ -93,31 +93,69 @@ export function MarcasPageClient({ brands, products }: Props) {
           {brands.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">No hay marcas disponibles aún.</p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {brands
                 .sort((a, b) => (a.display_order || 0) - (b.display_order || 0))
                 .map((brand, index) => {
                   const productCount = products.filter((p) => p.brand_id === brand.id).length
+                  const imageSrc = brand.hero_image || `/images/brands/brand-${brand.slug}.jpg`
                   return (
-                    <motion.div key={brand.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="group relative bg-card border border-border rounded-lg overflow-hidden hover:border-[var(--primary)]/50 hover:shadow-lg transition-all duration-300">
-                      <div className="relative h-40 bg-muted/50 flex items-center justify-center p-6 border-b border-border">
-                        <span className="text-3xl md:text-4xl font-serif font-bold text-foreground group-hover:text-[var(--primary)] transition-colors">
-                          {brand.name}
-                        </span>
-                      </div>
-                      <div className="p-6">
-                        <div className="flex items-start justify-between mb-3 gap-2">
+                    <motion.div
+                      key={brand.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.1 }}
+                      className="group bg-card border border-border rounded-xl overflow-hidden hover:border-[var(--primary)]/50 hover:shadow-xl transition-all duration-300"
+                    >
+                      {/* Image header */}
+                      <div className="relative h-44 overflow-hidden">
+                        <Image
+                          src={imageSrc}
+                          alt={`Maquinaria ${brand.name}`}
+                          fill
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+                        <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
                           <div>
-                            <h3 className="text-lg font-semibold text-foreground">{brand.name}</h3>
-                            {brand.country && <p className="text-xs text-[var(--primary)] font-semibold mt-1">{brand.country}</p>}
+                            <h3 className="font-serif text-3xl tracking-widest text-white leading-none">
+                              {brand.name.toUpperCase()}
+                            </h3>
+                            {brand.founded_year && (
+                              <p className="text-white/45 text-[11px] mt-1 tracking-widest uppercase">
+                                Desde {brand.founded_year}
+                              </p>
+                            )}
                           </div>
-                          {productCount > 0 && <Badge variant="secondary" className="shrink-0">{productCount} prod.</Badge>}
+                          {productCount > 0 && (
+                            <Badge className="bg-white/15 text-white border-white/20 backdrop-blur-sm shrink-0">
+                              {productCount} eq.
+                            </Badge>
+                          )}
                         </div>
-                        {brand.founded_year && <p className="text-xs text-muted-foreground mb-3">Fundada: {brand.founded_year}</p>}
-                        {brand.description && <p className="text-muted-foreground text-sm mb-4 line-clamp-3 leading-relaxed">{brand.description}</p>}
+                      </div>
+
+                      {/* Card body */}
+                      <div className="p-5">
+                        {brand.country && (
+                          <p className="text-[11px] text-primary font-semibold uppercase tracking-widest mb-2">
+                            🇯🇵 {brand.country}
+                          </p>
+                        )}
+                        {brand.description && (
+                          <p className="text-muted-foreground text-sm mb-5 line-clamp-3 leading-relaxed">
+                            {brand.description}
+                          </p>
+                        )}
                         <Link href={`/catalogo?marca=${brand.slug}`}>
-                          <Button variant="outline" size="sm" className="w-full text-[var(--primary)] border-[var(--primary)]/30 hover:bg-[var(--primary)]/10 hover:border-[var(--primary)] transition-all">
-                            Ver Productos
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full text-[var(--primary)] border-[var(--primary)]/30 hover:bg-[var(--primary)]/10 hover:border-[var(--primary)] transition-all"
+                          >
+                            Ver Equipos
                             <ArrowRight className="ml-2 h-4 w-4" />
                           </Button>
                         </Link>

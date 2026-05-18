@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import Image from "next/image"
 import { motion } from "framer-motion"
 import { ProductGrid, ProductFilters, FilterState } from "@/components/products"
 import {
@@ -74,23 +75,31 @@ export function CatalogoPageClient({ initialProducts, categories, brands }: Prop
   }, [initialProducts, filters])
 
   return (
-    <main className="pt-16">
-      {/* Page Header */}
-      <section className="py-12 lg:py-16 border-b border-border">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <main>
+      {/* Cinematic Page Hero */}
+      <section className="relative h-72 md:h-96 flex items-center justify-center overflow-hidden border-b border-border">
+        <Image
+          src="/images/catalog-hero.jpg"
+          alt="Catálogo de maquinaria japonesa"
+          fill
+          className="object-cover object-center"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/45 to-black/65" />
+        <div className="absolute inset-0 bg-gradient-to-t from-primary/20 via-transparent to-transparent" />
+        <div className="relative z-10 text-center px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <span className="text-sm text-primary font-medium tracking-wide uppercase mb-3 block">
+            <span className="text-sm text-primary font-medium tracking-widest uppercase mb-3 block">
               Nuestro Catálogo
             </span>
-            <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl text-foreground mb-4">
+            <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl text-white mb-4">
               Maquinaria Japonesa
             </h1>
-            <p className="text-muted-foreground max-w-2xl">
-              Explore nuestra selección de maquinaria japonesa de alta calidad.
+            <p className="text-white/75 max-w-2xl mx-auto">
               Mini excavadoras, tractores, cargadoras y más, importadas directamente desde Japón.
             </p>
           </motion.div>

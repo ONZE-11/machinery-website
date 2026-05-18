@@ -31,7 +31,7 @@ export function CTASection() {
       {/* Background Image with Overlay */}
       <div className="absolute inset-0">
         <Image
-          src="/images/cta-background.jpg"
+          src="/images/homepage-cta.jpg"
           alt="Maquinaria japonesa"
           fill
           className="object-cover"

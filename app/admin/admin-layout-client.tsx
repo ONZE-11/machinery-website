@@ -1,17 +1,14 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { useClerk } from "@clerk/nextjs"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet"
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useClerk } from "@clerk/nextjs";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Toaster } from "@/components/ui/sonner";
 import {
   LayoutDashboard,
   Package,
@@ -26,7 +23,7 @@ import {
   Users,
   Globe,
   Image as ImageIcon,
-} from "lucide-react"
+} from "lucide-react";
 
 const sidebarLinks = [
   { title: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -36,20 +33,20 @@ const sidebarLinks = [
   { title: "FAQ", href: "/admin/faq", icon: FileQuestion },
   { title: "Contact Messages", href: "/admin/messages", icon: Mail },
   { title: "Homepage", href: "/admin/homepage", icon: Home },
-  { title: "Media", href: "/admin/media", icon: ImageIcon },
+  // { title: "Media", href: "/admin/media", icon: ImageIcon },
   { title: "Social Links", href: "/admin/social", icon: Globe },
-  { title: "Admins", href: "/admin/admins", icon: Users },
+  // { title: "Admins", href: "/admin/admins", icon: Users },
   { title: "Settings", href: "/admin/settings", icon: Settings },
-]
+];
 
 interface SidebarProps {
-  user: { name: string; email: string }
-  onLinkClick?: () => void
+  user: { name: string; email: string };
+  onLinkClick?: () => void;
 }
 
 function SidebarContent({ user, onLinkClick }: SidebarProps) {
-  const pathname = usePathname()
-  const { signOut } = useClerk()
+  const pathname = usePathname();
+  const { signOut } = useClerk();
 
   return (
     <div className="flex flex-col h-full">
@@ -72,7 +69,7 @@ function SidebarContent({ user, onLinkClick }: SidebarProps) {
           {sidebarLinks.map((link) => {
             const isActive =
               pathname === link.href ||
-              (link.href !== "/admin" && pathname.startsWith(link.href))
+              (link.href !== "/admin" && pathname.startsWith(link.href));
 
             return (
               <Link
@@ -83,13 +80,13 @@ function SidebarContent({ user, onLinkClick }: SidebarProps) {
                   "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                   isActive
                     ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
                 )}
               >
                 <link.icon className="h-5 w-5" />
                 {link.title}
               </Link>
-            )
+            );
           })}
         </nav>
       </ScrollArea>
@@ -130,16 +127,16 @@ function SidebarContent({ user, onLinkClick }: SidebarProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 interface AdminLayoutClientProps {
-  children: React.ReactNode
-  user: { name: string; email: string }
+  children: React.ReactNode;
+  user: { name: string; email: string };
 }
 
 export function AdminLayoutClient({ children, user }: AdminLayoutClientProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-background">
@@ -153,7 +150,9 @@ export function AdminLayoutClient({ children, user }: AdminLayoutClientProps) {
         <div className="flex items-center justify-between p-4">
           <Link href="/admin" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-lg font-bold text-primary-foreground">M</span>
+              <span className="text-lg font-bold text-primary-foreground">
+                M
+              </span>
             </div>
             <span className="font-semibold">Admin</span>
           </Link>
@@ -178,6 +177,8 @@ export function AdminLayoutClient({ children, user }: AdminLayoutClientProps) {
       <main className="lg:ml-64">
         <div className="p-6 lg:p-8">{children}</div>
       </main>
+
+      <Toaster richColors position="top-right" />
     </div>
-  )
+  );
 }

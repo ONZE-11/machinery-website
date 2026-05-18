@@ -95,7 +95,7 @@ export function PorQueJaponesaClient() {
               </Badge>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-foreground mb-6">
                 ¿Por Qué Elegir{" "}
-                <span className="text-primary">Maquinaria Japonesa</span>?
+                <span className="text-[var(--hero-accent)]">Maquinaria Japonesa</span>?
               </h1>
               <p className="text-lg text-muted-foreground leading-relaxed mb-8">
                 Japón es sinónimo de calidad, innovación y excelencia en la

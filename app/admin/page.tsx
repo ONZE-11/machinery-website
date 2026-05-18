@@ -133,7 +133,7 @@ export default function AdminDashboard() {
                           {product.featured && (
                             <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded">Featured</span>
                           )}
-                          <Link href={`/admin/products/${product.id}`}>
+                          <Link href={`/admin/products/${product.id}/edit`}>
                             <Button variant="ghost" size="icon">
                               <Eye className="h-4 w-4" />
                             </Button>

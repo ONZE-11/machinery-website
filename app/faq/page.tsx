@@ -1,28 +1,17 @@
-import type { Metadata } from "next"
-import { Header, Footer, WhatsAppButton } from "@/components/layout"
+import { Footer, Header, WhatsAppButton } from "@/components/layout"
 import { FAQPageClient } from "./faq-client"
-import { getActiveFAQs } from "@/lib/supabase/queries"
-
-export const metadata: Metadata = {
-  title: "Preguntas Frecuentes | Maquinaria Japonesa en España",
-  description:
-    "Resuelva sus dudas sobre importación de maquinaria japonesa, garantías, financiación, envíos y proceso de compra. Respuestas claras a las preguntas más comunes.",
-  keywords: [
-    "preguntas frecuentes maquinaria",
-    "FAQ importación Japón",
-    "garantía maquinaria japonesa",
-    "financiación maquinaria industrial",
-  ],
-  openGraph: {
-    title: "Preguntas Frecuentes sobre Maquinaria Japonesa",
-    description:
-      "Todo lo que necesita saber sobre la importación de maquinaria japonesa a España.",
-    type: "website",
-  },
-}
 
 export default async function FAQPage() {
-  const faqs = await getActiveFAQs()
+  const res = await fetch("http://localhost:3000/api/faq", {
+    cache: "no-store",
+  })
+
+  const data = await res.json()
+  const faqs = Array.isArray(data)
+    ? data.filter((faq) => faq.active)
+    : []
+
+  console.log("FAQ PAGE DATA:", faqs)
 
   return (
     <div className="min-h-screen bg-background">

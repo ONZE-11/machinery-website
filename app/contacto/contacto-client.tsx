@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { contactFormSchema, type ContactFormData } from "@/lib/validations"
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle, AlertCircle } from "lucide-react"
+import { MapPin, Phone, Mail, Clock, Send, CheckCircle, AlertCircle, Package } from "lucide-react"
 
 type ProductBasic = { slug: string; title: string; model: string | null }
 
@@ -51,16 +51,19 @@ export function ContactoPageClient({ settings, products }: Props) {
       email: "",
       phone: "",
       company: "",
+      // Subject pre-filled with product name only in the subject field
       subject: selectedProduct ? `Consulta: ${selectedProduct.title}` : "",
-      message: selectedProduct
-        ? `Me interesa obtener más información sobre el producto: ${selectedProduct.title}${selectedProduct.model ? ` (Modelo: ${selectedProduct.model})` : ""}.`
-        : "",
-      product_interest: selectedProduct?.slug || "",
+      // Message starts clean — product is already shown in the banner & subject
+      message: "",
+      product_interest: selectedProduct?.slug ?? "",
       privacy_accepted: false,
     },
   })
 
   const onSubmit: SubmitHandler<ContactFormData> = async (data) => {
+    // Extra guard — react-hook-form + zod should prevent this, but belt-and-suspenders
+    if (!data.privacy_accepted) return
+
     setIsSubmitting(true)
     setSubmitStatus(null)
     try {
@@ -83,14 +86,14 @@ export function ContactoPageClient({ settings, products }: Props) {
   }
 
   const settingsAddress = settings.address ?? ""
-  const settingsPhone = settings.phone ?? ""
+  const settingsPhone   = settings.phone   ?? ""
   const settingsWhatsapp = settings.whatsapp ?? ""
-  const settingsEmail = settings.email ?? ""
-  const settingsHours = settings.hours ?? ""
+  const settingsEmail   = settings.email   ?? ""
+  const settingsHours   = settings.hours   ?? ""
 
   return (
     <main>
-      {/* Hero Section */}
+      {/* Hero */}
       <section className="relative py-20 bg-gradient-to-b from-muted/50 to-background">
         <div className="container mx-auto px-4">
           <motion.div
@@ -110,11 +113,12 @@ export function ContactoPageClient({ settings, products }: Props) {
         </div>
       </section>
 
-      {/* Contact Section */}
+      {/* Main section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            {/* Contact Info */}
+
+            {/* Contact info sidebar */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -124,7 +128,6 @@ export function ContactoPageClient({ settings, products }: Props) {
               <h2 className="text-2xl font-heading font-bold text-foreground mb-6">
                 Información de Contacto
               </h2>
-
               <div className="space-y-6">
                 {settingsAddress && (
                   <div className="flex items-start gap-4">
@@ -137,7 +140,6 @@ export function ContactoPageClient({ settings, products }: Props) {
                     </div>
                   </div>
                 )}
-
                 {settingsPhone && (
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -148,11 +150,12 @@ export function ContactoPageClient({ settings, products }: Props) {
                       <a href={`tel:${settingsPhone}`} className="text-muted-foreground hover:text-primary transition-colors">
                         {settingsPhone}
                       </a>
-                      {settingsWhatsapp && <p className="text-sm text-muted-foreground mt-1">WhatsApp disponible</p>}
+                      {settingsWhatsapp && (
+                        <p className="text-sm text-muted-foreground mt-1">WhatsApp disponible</p>
+                      )}
                     </div>
                   </div>
                 )}
-
                 {settingsEmail && (
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -166,7 +169,6 @@ export function ContactoPageClient({ settings, products }: Props) {
                     </div>
                   </div>
                 )}
-
                 {settingsHours && (
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -192,7 +194,7 @@ export function ContactoPageClient({ settings, products }: Props) {
               </div>
             </motion.div>
 
-            {/* Contact Form */}
+            {/* Form column */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -204,40 +206,60 @@ export function ContactoPageClient({ settings, products }: Props) {
                   Envíenos un Mensaje
                 </h2>
 
+                {/* Product prefill banner — shown once, clearly */}
+                {selectedProduct && (
+                  <div className="mb-6 flex items-center gap-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
+                    <Package className="h-5 w-5 text-primary shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-xs text-muted-foreground">Consulta sobre el producto:</p>
+                      <p className="text-sm font-semibold text-foreground truncate">{selectedProduct.title}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Success */}
                 {submitStatus === "success" && (
                   <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg flex items-center gap-3">
-                    <CheckCircle className="h-5 w-5 text-emerald-500" />
+                    <CheckCircle className="h-5 w-5 text-emerald-500 shrink-0" />
                     <p className="text-emerald-400">
                       ¡Mensaje enviado correctamente! Nos pondremos en contacto con usted pronto.
                     </p>
                   </div>
                 )}
 
+                {/* Error */}
                 {submitStatus === "error" && (
                   <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-3">
-                    <AlertCircle className="h-5 w-5 text-red-500" />
+                    <AlertCircle className="h-5 w-5 text-red-500 shrink-0" />
                     <p className="text-red-400">
                       Hubo un error al enviar el mensaje. Por favor, inténtelo de nuevo o contáctenos por teléfono.
                     </p>
                   </div>
                 )}
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
+                  {/* Name + Email */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <Label htmlFor="name">Nombre completo <span className="text-red-500">*</span></Label>
                       <Input id="name" {...register("name")} className="mt-2" placeholder="Su nombre" />
-                      {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
+                      {errors.name && (
+                        <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                      )}
                     </div>
                     <div>
                       <Label htmlFor="email">Email <span className="text-red-500">*</span></Label>
                       <Input id="email" type="email" {...register("email")} className="mt-2" placeholder="su@email.com" />
-                      {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+                      {errors.email && (
+                        <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                      )}
                     </div>
                     <div>
                       <Label htmlFor="phone">Teléfono</Label>
                       <Input id="phone" {...register("phone")} className="mt-2" placeholder="+34 601 080 799" />
-                      {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>}
+                      {errors.phone && (
+                        <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
+                      )}
                     </div>
                     <div>
                       <Label htmlFor="company">Empresa</Label>
@@ -245,14 +267,14 @@ export function ContactoPageClient({ settings, products }: Props) {
                     </div>
                   </div>
 
-                  {/* Product Interest */}
+                  {/* Product interest */}
                   <div>
                     <Label htmlFor="product_interest">Producto de interés</Label>
                     <Select
                       value={watch("product_interest")}
-                      onValueChange={(value) => setValue("product_interest", value)}
+                      onValueChange={(value) => setValue("product_interest", value, { shouldDirty: true })}
                     >
-                      <SelectTrigger className="mt-2">
+                      <SelectTrigger className="mt-2" id="product_interest">
                         <SelectValue placeholder="Seleccione un producto (opcional)" />
                       </SelectTrigger>
                       <SelectContent>
@@ -270,7 +292,9 @@ export function ContactoPageClient({ settings, products }: Props) {
                   <div>
                     <Label htmlFor="subject">Asunto <span className="text-red-500">*</span></Label>
                     <Input id="subject" {...register("subject")} className="mt-2" placeholder="Asunto de su consulta" />
-                    {errors.subject && <p className="text-red-500 text-sm mt-1">{errors.subject.message}</p>}
+                    {errors.subject && (
+                      <p className="text-red-500 text-sm mt-1">{errors.subject.message}</p>
+                    )}
                   </div>
 
                   {/* Message */}
@@ -282,32 +306,44 @@ export function ContactoPageClient({ settings, products }: Props) {
                       className="mt-2 min-h-[150px]"
                       placeholder="Escriba su mensaje aquí..."
                     />
-                    {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message.message}</p>}
+                    {errors.message && (
+                      <p className="text-red-500 text-sm mt-1">{errors.message.message}</p>
+                    )}
                   </div>
 
-                  {/* Privacy */}
-                  <div className="flex items-start space-x-3">
-                    <Checkbox
-                      id="privacy"
-                      checked={watch("privacy_accepted")}
-                      onCheckedChange={(checked) => setValue("privacy_accepted", checked === true)}
-                    />
-                    <div className="grid gap-1.5 leading-none">
-                      <Label htmlFor="privacy" className="text-sm font-normal cursor-pointer">
+                  {/* Privacy checkbox */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-start gap-3">
+                      <Checkbox
+                        id="privacy"
+                        checked={watch("privacy_accepted")}
+                        onCheckedChange={(checked) =>
+                          setValue("privacy_accepted", checked === true, { shouldValidate: true })
+                        }
+                        className="mt-0.5"
+                      />
+                      <Label htmlFor="privacy" className="text-sm font-normal cursor-pointer leading-relaxed">
                         He leído y acepto la{" "}
                         <a href="/privacidad" target="_blank" className="text-primary hover:underline">
                           Política de Privacidad
                         </a>{" "}
                         <span className="text-red-500">*</span>
                       </Label>
-                      {errors.privacy_accepted && (
-                        <p className="text-red-500 text-sm">{errors.privacy_accepted.message}</p>
-                      )}
                     </div>
+                    {errors.privacy_accepted && (
+                      <p className="text-red-500 text-sm pl-7">{errors.privacy_accepted.message}</p>
+                    )}
                   </div>
 
-                  <Button type="submit" size="lg" className="w-full gap-2" disabled={isSubmitting}>
-                    {isSubmitting ? "Enviando..." : (
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="w-full gap-2"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      "Enviando..."
+                    ) : (
                       <>
                         <Send className="h-5 w-5" />
                         Enviar Mensaje

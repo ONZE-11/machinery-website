@@ -27,8 +27,9 @@ export default async function SobreNosotrosPage() {
   const section = await getHomepageSection('trust')
   const imageUrl = section?.image || null
 
-  console.log("ABOUT PAGE IMAGE SECTION:", {
-    key: section?.section_key,
+  console.log("PAGE IMAGE DEBUG", {
+    page: "/sobre-nosotros",
+    section_key: section?.section_key,
     image: section?.image,
   })
 

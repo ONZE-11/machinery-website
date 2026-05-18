@@ -27,8 +27,9 @@ export default async function PorQueJaponesaPage() {
   const section = await getHomepageSection('why_japanese')
   const imageUrl = section?.image || null
 
-  console.log("PORQUE PAGE IMAGE SECTION:", {
-    key: section?.section_key,
+  console.log("PAGE IMAGE DEBUG", {
+    page: "/por-que-maquinaria-japonesa",
+    section_key: section?.section_key,
     image: section?.image,
   })
 

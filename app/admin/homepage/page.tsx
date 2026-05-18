@@ -9,12 +9,35 @@ import { cn } from "@/lib/utils"
 import type { HomepageSection } from "@/types/database"
 import { Pencil, Loader2 } from "lucide-react"
 
-const SECTION_LABELS: Record<string, string> = {
-  hero:              "Home — main hero",
-  why_japanese_home: "Home — Why Japanese section",
-  why_japanese_page: "Page — ¿Por Qué Japonesa? (/por-que-maquinaria-japonesa)",
-  hero_secondary:    "Page — ¿Por Qué Japonesa? hero (/por-que-maquinaria-japonesa)",
-  trust:             "About / trust section (/sobre-nosotros)",
+type SectionMeta = { label: string; description: string; path: string; deprecated?: boolean }
+
+const SECTION_META: Record<string, SectionMeta> = {
+  hero: {
+    label:       "Home Page — Main Hero",
+    description: "Controls the main hero image and content at the top of the homepage.",
+    path:        "/",
+  },
+  why_japanese_home: {
+    label:       "Home Page — Why Japanese Section",
+    description: 'Controls the "¿Por Qué Maquinaria Japonesa?" section inside the homepage.',
+    path:        "/ (homepage section)",
+  },
+  hero_secondary: {
+    label:       "¿Por Qué Japonesa? Page — Hero",
+    description: "Controls the hero image and content for the dedicated ¿Por Qué? page.",
+    path:        "/por-que-maquinaria-japonesa",
+  },
+  trust: {
+    label:       "Sobre Nosotros Page — Hero / Trust Section",
+    description: "Controls the hero/trust image and content for the About page.",
+    path:        "/sobre-nosotros",
+  },
+  why_japanese_page: {
+    label:       "Deprecated — Not Used",
+    description: "This section is no longer used by any page.",
+    path:        "—",
+    deprecated:  true,
+  },
 }
 
 export default function HomepageSectionsPage() {
@@ -62,64 +85,90 @@ export default function HomepageSectionsPage() {
 
       {!loading && !error && (
         <div className="space-y-4">
-          {sections.map((section) => (
-            <Card key={section.id}>
-              <CardContent className="p-5">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    {section.image && (
-                      <img
-                        src={section.image}
-                        alt={section.title ?? section.section_key}
-                        className="w-16 h-12 object-cover rounded shrink-0"
-                      />
-                    )}
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <code className="text-xs bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
-                          {section.section_key}
-                        </code>
-                        <Badge
-                          onClick={() => handleToggleActive(section)}
-                          className={cn(
-                            "cursor-pointer select-none text-xs",
-                            section.active
-                              ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30"
-                              : "bg-muted text-muted-foreground hover:bg-muted/80"
+          {sections.map((section) => {
+            const meta = SECTION_META[section.section_key]
+            return (
+              <Card key={section.id} className={meta?.deprecated ? "opacity-50" : ""}>
+                <CardContent className="p-5">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      {/* Thumbnail */}
+                      {section.image ? (
+                        <img
+                          src={section.image}
+                          alt={section.title ?? section.section_key}
+                          className="w-16 h-12 object-cover rounded shrink-0"
+                        />
+                      ) : (
+                        <div className="w-16 h-12 rounded bg-muted shrink-0 flex items-center justify-center">
+                          <span className="text-[10px] text-muted-foreground">No img</span>
+                        </div>
+                      )}
+
+                      <div className="min-w-0 flex-1">
+                        {/* Row 1: section_key + active badge + deprecated */}
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <code className="text-xs bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
+                            {section.section_key}
+                          </code>
+                          <Badge
+                            onClick={() => !meta?.deprecated && handleToggleActive(section)}
+                            className={cn(
+                              "select-none text-xs",
+                              meta?.deprecated
+                                ? "bg-amber-500/15 text-amber-500 cursor-default"
+                                : section.active
+                                  ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 cursor-pointer"
+                                  : "bg-muted text-muted-foreground hover:bg-muted/80 cursor-pointer"
+                            )}
+                          >
+                            {meta?.deprecated ? "Deprecated" : section.active ? "Active" : "Inactive"}
+                          </Badge>
+                          {/* Path badge */}
+                          {meta?.path && meta.path !== "—" && (
+                            <span className="text-[10px] font-mono bg-primary/10 text-primary px-1.5 py-0.5 rounded">
+                              {meta.path}
+                            </span>
                           )}
-                        >
-                          {section.active ? "Active" : "Inactive"}
-                        </Badge>
+                        </div>
+
+                        {/* Row 2: label (bold) */}
+                        {meta && (
+                          <p className={cn(
+                            "text-sm font-semibold leading-tight",
+                            meta.deprecated ? "text-muted-foreground line-through" : "text-foreground"
+                          )}>
+                            {meta.label}
+                          </p>
+                        )}
+
+                        {/* Row 3: description */}
+                        {meta?.description && !meta.deprecated && (
+                          <p className="text-xs text-muted-foreground mt-0.5 leading-snug">
+                            {meta.description}
+                          </p>
+                        )}
+
+                        {/* Row 4: DB title */}
+                        {section.title && (
+                          <p className="text-xs text-muted-foreground mt-1 truncate">
+                            Title: <span className="text-foreground/70">{section.title}</span>
+                          </p>
+                        )}
                       </div>
-                      {SECTION_LABELS[section.section_key] && (
-                        <p className="text-xs text-primary/70 font-medium truncate">
-                          {SECTION_LABELS[section.section_key]}
-                        </p>
-                      )}
-                      {section.title && (
-                        <p className="font-medium text-foreground truncate">{section.title}</p>
-                      )}
-                      {section.subtitle && (
-                        <p className="text-sm text-muted-foreground truncate">{section.subtitle}</p>
-                      )}
-                      {section.cta_text && (
-                        <p className="text-xs text-muted-foreground mt-1">
-                          CTA: {section.cta_text}
-                          {section.cta_link && ` → ${section.cta_link}`}
-                        </p>
-                      )}
                     </div>
+
+                    <Link href={`/admin/homepage/${section.id}/edit`} className="shrink-0">
+                      <Button variant="outline" size="sm" className="gap-2">
+                        <Pencil className="h-4 w-4" />
+                        Edit
+                      </Button>
+                    </Link>
                   </div>
-                  <Link href={`/admin/homepage/${section.id}/edit`} className="shrink-0">
-                    <Button variant="outline" size="sm" className="gap-2">
-                      <Pencil className="h-4 w-4" />
-                      Edit
-                    </Button>
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            )
+          })}
 
           {sections.length === 0 && (
             <p className="text-center text-muted-foreground py-8">

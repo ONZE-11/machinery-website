@@ -19,13 +19,35 @@ import { ArrowLeft, Save, Loader2 } from "lucide-react"
 type EditableFields = Omit<HomepageSectionFormData, "section_key">
 const editSchema = homepageSectionSchema.omit({ section_key: true })
 
-// Human-readable labels for each section key
-const SECTION_LABELS: Record<string, string> = {
-  hero:              "Home — main hero",
-  why_japanese_home: "Home — Why Japanese section",
-  why_japanese_page: "Page — ¿Por Qué Japonesa? (/por-que-maquinaria-japonesa)",
-  hero_secondary:    "Page — ¿Por Qué Japonesa? hero (/por-que-maquinaria-japonesa)",
-  trust:             "About / trust section (/sobre-nosotros)",
+type SectionMeta = { label: string; description: string; path: string; deprecated?: boolean }
+
+const SECTION_META: Record<string, SectionMeta> = {
+  hero: {
+    label:       "Home Page — Main Hero",
+    description: "Controls the main hero image and content at the top of the homepage.",
+    path:        "/",
+  },
+  why_japanese_home: {
+    label:       "Home Page — Why Japanese Section",
+    description: 'Controls the "¿Por Qué Maquinaria Japonesa?" section inside the homepage.',
+    path:        "/ (homepage section)",
+  },
+  hero_secondary: {
+    label:       "¿Por Qué Japonesa? Page — Hero",
+    description: "Controls the hero image and content for the dedicated ¿Por Qué? page.",
+    path:        "/por-que-maquinaria-japonesa",
+  },
+  trust: {
+    label:       "Sobre Nosotros Page — Hero / Trust Section",
+    description: "Controls the hero/trust image and content for the About page.",
+    path:        "/sobre-nosotros",
+  },
+  why_japanese_page: {
+    label:       "Deprecated — Not Used",
+    description: "This section is no longer used by any page.",
+    path:        "—",
+    deprecated:  true,
+  },
 }
 
 export default function EditHomepageSectionPage() {
@@ -91,6 +113,8 @@ export default function EditHomepageSectionPage() {
     <div className="text-center py-24 text-muted-foreground">Section not found</div>
   )
 
+  const meta = SECTION_META[sectionKey]
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -100,16 +124,22 @@ export default function EditHomepageSectionPage() {
           </Link>
           <div>
             <h1 className="text-3xl font-bold text-foreground">Edit Section</h1>
-            <div className="flex items-center gap-2 mt-0.5">
+            <div className="flex items-center gap-2 mt-1 flex-wrap">
               <code className="text-xs bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
                 {sectionKey}
               </code>
-              {SECTION_LABELS[sectionKey] && (
-                <span className="text-xs text-muted-foreground">
-                  — {SECTION_LABELS[sectionKey]}
+              {meta?.path && meta.path !== "—" && (
+                <span className="text-[11px] font-mono bg-primary/10 text-primary px-1.5 py-0.5 rounded">
+                  {meta.path}
                 </span>
               )}
             </div>
+            {meta && (
+              <p className="text-sm font-semibold text-foreground mt-1">{meta.label}</p>
+            )}
+            {meta?.description && (
+              <p className="text-xs text-muted-foreground mt-0.5 max-w-md">{meta.description}</p>
+            )}
           </div>
         </div>
         <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting} className="gap-2">

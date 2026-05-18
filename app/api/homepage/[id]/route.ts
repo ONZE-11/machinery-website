@@ -11,7 +11,6 @@ const SECTION_PATHS: Record<string, string[]> = {
   hero:              ['/'],
   why_japanese:      ['/'],
   why_japanese_home: ['/'],
-  why_japanese_page: ['/por-que-maquinaria-japonesa'],
   hero_secondary:    ['/por-que-maquinaria-japonesa'],
   trust:             ['/sobre-nosotros'],
 }

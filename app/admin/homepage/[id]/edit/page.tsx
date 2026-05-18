@@ -42,12 +42,6 @@ const SECTION_META: Record<string, SectionMeta> = {
     description: "Controls the hero/trust image and content for the About page.",
     path:        "/sobre-nosotros",
   },
-  why_japanese_page: {
-    label:       "Deprecated — Not Used",
-    description: "This section is no longer used by any page.",
-    path:        "—",
-    deprecated:  true,
-  },
 }
 
 export default function EditHomepageSectionPage() {
@@ -70,6 +64,10 @@ export default function EditHomepageSectionPage() {
       })
       .then((data: HomepageSection | null) => {
         if (data) {
+          if (data.section_key === 'why_japanese_page') {
+            router.replace('/admin/homepage')
+            return
+          }
           setSectionKey(data.section_key)
           reset({
             title: data.title,

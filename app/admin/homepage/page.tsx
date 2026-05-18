@@ -32,12 +32,6 @@ const SECTION_META: Record<string, SectionMeta> = {
     description: "Controls the hero/trust image and content for the About page.",
     path:        "/sobre-nosotros",
   },
-  why_japanese_page: {
-    label:       "Deprecated — Not Used",
-    description: "This section is no longer used by any page.",
-    path:        "—",
-    deprecated:  true,
-  },
 }
 
 export default function HomepageSectionsPage() {
@@ -85,7 +79,7 @@ export default function HomepageSectionsPage() {
 
       {!loading && !error && (
         <div className="space-y-4">
-          {sections.map((section) => {
+          {sections.filter((s) => s.section_key !== 'why_japanese_page').map((section) => {
             const meta = SECTION_META[section.section_key]
             return (
               <Card key={section.id} className={meta?.deprecated ? "opacity-50" : ""}>

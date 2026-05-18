@@ -18,7 +18,10 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { contactFormSchema, type ContactFormData } from "@/lib/validations"
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle, AlertCircle, Package } from "lucide-react"
+import {
+  MapPin, Phone, Mail, Clock, Send,
+  CheckCircle, AlertCircle, Package, X, MessageSquare,
+} from "lucide-react"
 
 type ProductBasic = { slug: string; title: string; model: string | null }
 
@@ -27,13 +30,11 @@ interface Props {
   products: ProductBasic[]
 }
 
-// Sentinel value for "no specific product" in the Select component
 const NO_PRODUCT = "__general__"
 
 export function ContactoPageClient({ settings, products }: Props) {
   const searchParams = useSearchParams()
-  const productSlug = searchParams.get("producto")
-  // The initial product from URL — used only for defaultValues, not reactive
+  const productSlug  = searchParams.get("producto")
   const initialProduct = productSlug
     ? products.find((p) => p.slug === productSlug) ?? null
     : null
@@ -42,12 +43,9 @@ export function ContactoPageClient({ settings, products }: Props) {
   const [submitStatus, setSubmitStatus] = useState<"success" | "error" | null>(null)
 
   const {
-    register,
-    handleSubmit,
+    register, handleSubmit,
     formState: { errors },
-    reset,
-    setValue,
-    watch,
+    reset, setValue, watch,
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
@@ -55,14 +53,13 @@ export function ContactoPageClient({ settings, products }: Props) {
       email:            "",
       phone:            "",
       company:          "",
-      subject:          "",          // user fills in their own subject — no product name injection
-      message:          "",          // user writes their own message
-      product_interest: initialProduct?.slug ?? "",  // slug used internally for lookup
+      subject:          "",
+      message:          "",
+      product_interest: initialProduct?.slug ?? "",
       privacy_accepted: false,
     },
   })
 
-  // Resolve current product_interest slug → product object (reactive)
   const productInterestValue = watch("product_interest")
   const activeProduct = productInterestValue
     ? products.find((p) => p.slug === productInterestValue) ?? null
@@ -70,8 +67,6 @@ export function ContactoPageClient({ settings, products }: Props) {
 
   const onSubmit: SubmitHandler<ContactFormData> = async (data) => {
     if (!data.privacy_accepted) return
-
-    // Resolve slug → human-readable title for admin inbox
     const productTitle = data.product_interest
       ? products.find((p) => p.slug === data.product_interest)?.title ?? data.product_interest
       : undefined
@@ -82,17 +77,10 @@ export function ContactoPageClient({ settings, products }: Props) {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...data,
-          product_interest: productTitle,   // store readable name, not slug
-        }),
+        body: JSON.stringify({ ...data, product_interest: productTitle }),
       })
-      if (res.ok) {
-        setSubmitStatus("success")
-        reset()
-      } else {
-        setSubmitStatus("error")
-      }
+      if (res.ok) { setSubmitStatus("success"); reset() }
+      else         { setSubmitStatus("error") }
     } catch {
       setSubmitStatus("error")
     } finally {
@@ -100,104 +88,118 @@ export function ContactoPageClient({ settings, products }: Props) {
     }
   }
 
-  const settingsAddress  = settings.address  ?? ""
-  const settingsPhone    = settings.phone    ?? ""
-  const settingsWhatsapp = settings.whatsapp ?? ""
-  const settingsEmail    = settings.email    ?? ""
-  const settingsHours    = settings.hours    ?? ""
+  const addr     = settings.address  ?? ""
+  const phone    = settings.phone    ?? ""
+  const whatsapp = settings.whatsapp ?? ""
+  const email    = settings.email    ?? ""
+  const hours    = settings.hours    ?? ""
 
+  // ─── helpers ───────────────────────────────────────────────────────────────
+  const Field = ({ error, children }: { error?: string; children: React.ReactNode }) => (
+    <div className="space-y-1.5">{children}{error && <p className="text-[13px] text-red-500">{error}</p>}</div>
+  )
+
+  // ─── render ────────────────────────────────────────────────────────────────
   return (
-    <main>
-      {/* Hero */}
-      <section className="relative py-20 bg-gradient-to-b from-muted/50 to-background">
-        <div className="container mx-auto px-4">
+    <main className="min-h-screen bg-background">
+
+      {/* ── Hero ── */}
+      <section className="bg-gradient-to-b from-muted/60 to-background border-b border-border">
+        <div className="container mx-auto px-4 py-16 md:py-24">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
+            transition={{ duration: 0.55 }}
+            className="max-w-2xl"
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-foreground mb-6">
-              <span className="text-primary">Contáctenos</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-5">
+              <MessageSquare className="w-3.5 h-3.5 text-primary" />
+              <span className="text-xs font-medium text-primary uppercase tracking-wider">Contacto</span>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 leading-tight">
+              ¿Hablamos de tu próxima{" "}
+              <span className="text-primary">máquina?</span>
             </h1>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              Estamos aquí para ayudarle. Solicite información, presupuestos o resuelva
-              cualquier duda sobre nuestra maquinaria japonesa. Respuesta garantizada en 24 horas laborables.
+            <p className="text-muted-foreground text-lg leading-relaxed">
+              Cuéntenos qué necesita. Le respondemos en menos de 24 horas laborables
+              con información, precios y disponibilidad.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Main section */}
-      <section className="py-16">
+      {/* ── Two-column layout ── */}
+      <section className="py-14">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
 
-            {/* Sidebar */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
+            {/* ── Left: contact info ── */}
+            <motion.aside
+              initial={{ opacity: 0, x: -16 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
-              className="lg:col-span-1"
+              className="lg:col-span-2 space-y-4"
             >
-              <h2 className="text-2xl font-heading font-bold text-foreground mb-6">
-                Información de Contacto
-              </h2>
-              <div className="space-y-6">
-                {settingsAddress && (
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <MapPin className="h-6 w-6 text-primary" />
+              {/* Info card */}
+              <div className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-5">
+                <h2 className="text-base font-semibold text-foreground">Información de contacto</h2>
+
+                {addr && (
+                  <div className="flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                      <MapPin className="h-4 w-4 text-primary" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-foreground mb-1">Dirección</h3>
-                      <p className="text-muted-foreground">{settingsAddress}</p>
+                      <p className="text-[13px] font-medium text-foreground">Dirección</p>
+                      <p className="text-[13px] text-muted-foreground">{addr}</p>
                     </div>
                   </div>
                 )}
-                {settingsPhone && (
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Phone className="h-6 w-6 text-primary" />
+
+                {phone && (
+                  <div className="flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                      <Phone className="h-4 w-4 text-primary" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-foreground mb-1">Teléfono</h3>
-                      <a href={`tel:${settingsPhone}`} className="text-muted-foreground hover:text-primary transition-colors">
-                        {settingsPhone}
+                      <p className="text-[13px] font-medium text-foreground">Teléfono</p>
+                      <a href={`tel:${phone}`} className="text-[13px] text-muted-foreground hover:text-primary transition-colors">
+                        {phone}
                       </a>
-                      {settingsWhatsapp && (
-                        <p className="text-sm text-muted-foreground mt-1">WhatsApp disponible</p>
-                      )}
+                      {whatsapp && <p className="text-[12px] text-muted-foreground/70 mt-0.5">WhatsApp disponible</p>}
                     </div>
                   </div>
                 )}
-                {settingsEmail && (
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Mail className="h-6 w-6 text-primary" />
+
+                {email && (
+                  <div className="flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                      <Mail className="h-4 w-4 text-primary" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-foreground mb-1">Email</h3>
-                      <a href={`mailto:${settingsEmail}`} className="text-muted-foreground hover:text-primary transition-colors">
-                        {settingsEmail}
+                      <p className="text-[13px] font-medium text-foreground">Email</p>
+                      <a href={`mailto:${email}`} className="text-[13px] text-muted-foreground hover:text-primary transition-colors">
+                        {email}
                       </a>
                     </div>
                   </div>
                 )}
-                {settingsHours && (
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Clock className="h-6 w-6 text-primary" />
+
+                {hours && (
+                  <div className="flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                      <Clock className="h-4 w-4 text-primary" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-foreground mb-1">Horario</h3>
-                      <p className="text-muted-foreground whitespace-pre-line">{settingsHours}</p>
+                      <p className="text-[13px] font-medium text-foreground">Horario</p>
+                      <p className="text-[13px] text-muted-foreground whitespace-pre-line">{hours}</p>
                     </div>
                   </div>
                 )}
               </div>
 
-              <div className="mt-8 rounded-lg overflow-hidden border border-border">
+              {/* Map */}
+              <div className="rounded-2xl overflow-hidden border border-border shadow-sm">
                 <iframe
                   src="https://www.google.com/maps?q=Pol%C3%ADgono+Industrial+Fuente+del+Jarro%2C+Paterna%2C+Valencia%2C+Espa%C3%B1a&output=embed"
                   className="w-full aspect-[4/3] border-0"
@@ -207,164 +209,189 @@ export function ContactoPageClient({ settings, products }: Props) {
                   allowFullScreen
                 />
               </div>
-            </motion.div>
+            </motion.aside>
 
-            {/* Form */}
+            {/* ── Right: form ── */}
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, x: 16 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="lg:col-span-2"
+              transition={{ duration: 0.5, delay: 0.08 }}
+              className="lg:col-span-3"
             >
-              <div className="bg-card border border-border rounded-lg p-8">
-                <h2 className="text-2xl font-heading font-bold text-foreground mb-6">
-                  Envíenos un Mensaje
-                </h2>
-
-                {/* Dynamic product banner — reacts to what's selected in the dropdown */}
-                {activeProduct && (
-                  <div className="mb-6 flex items-center gap-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
-                    <Package className="h-5 w-5 text-primary shrink-0" />
-                    <div className="min-w-0">
-                      <p className="text-xs text-muted-foreground">Producto de interés seleccionado:</p>
-                      <p className="text-sm font-semibold text-foreground truncate">
-                        {activeProduct.title}
-                        {activeProduct.model && (
-                          <span className="font-normal text-muted-foreground ml-1">— {activeProduct.model}</span>
-                        )}
-                      </p>
-                    </div>
-                  </div>
-                )}
+              <div className="rounded-2xl border border-border bg-card shadow-sm p-7 md:p-9">
 
                 {/* Success */}
-                {submitStatus === "success" && (
-                  <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg flex items-center gap-3">
-                    <CheckCircle className="h-5 w-5 text-emerald-500 shrink-0" />
-                    <p className="text-emerald-400">
-                      ¡Mensaje enviado correctamente! Nos pondremos en contacto con usted pronto.
-                    </p>
-                  </div>
-                )}
-
-                {/* Error */}
-                {submitStatus === "error" && (
-                  <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-3">
-                    <AlertCircle className="h-5 w-5 text-red-500 shrink-0" />
-                    <p className="text-red-400">
-                      Hubo un error al enviar el mensaje. Por favor, inténtelo de nuevo o contáctenos por teléfono.
-                    </p>
-                  </div>
-                )}
-
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
-                  {/* Name + Email */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <Label htmlFor="name">Nombre completo <span className="text-red-500">*</span></Label>
-                      <Input id="name" {...register("name")} className="mt-2" placeholder="Su nombre" />
-                      {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
+                {submitStatus === "success" ? (
+                  <div className="flex flex-col items-center text-center py-10 gap-4">
+                    <div className="w-16 h-16 rounded-full bg-emerald-500/15 flex items-center justify-center">
+                      <CheckCircle className="w-8 h-8 text-emerald-500" />
                     </div>
                     <div>
-                      <Label htmlFor="email">Email <span className="text-red-500">*</span></Label>
-                      <Input id="email" type="email" {...register("email")} className="mt-2" placeholder="su@email.com" />
-                      {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+                      <h3 className="text-xl font-semibold text-foreground mb-1">
+                        Mensaje enviado correctamente
+                      </h3>
+                      <p className="text-muted-foreground text-sm">
+                        Nos pondremos en contacto con usted en menos de 24 horas laborables.
+                      </p>
                     </div>
-                    <div>
-                      <Label htmlFor="phone">Teléfono</Label>
-                      <Input id="phone" {...register("phone")} className="mt-2" placeholder="+34 601 080 799" />
-                      {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>}
-                    </div>
-                    <div>
-                      <Label htmlFor="company">Empresa</Label>
-                      <Input id="company" {...register("company")} className="mt-2" placeholder="Nombre de su empresa" />
-                    </div>
+                    <Button variant="outline" size="sm" onClick={() => setSubmitStatus(null)} className="mt-2">
+                      Enviar otro mensaje
+                    </Button>
                   </div>
+                ) : (
+                  <>
+                    <h2 className="text-xl font-semibold text-foreground mb-6">Envíenos un mensaje</h2>
 
-                  {/* Product select — value is slug internally, displayed as title */}
-                  <div>
-                    <Label>Producto de interés</Label>
-                    <Select
-                      value={productInterestValue || NO_PRODUCT}
-                      onValueChange={(value) => {
-                        setValue(
-                          "product_interest",
-                          value === NO_PRODUCT ? "" : value,
-                          { shouldDirty: true }
-                        )
-                      }}
-                    >
-                      <SelectTrigger className="mt-2">
-                        <SelectValue placeholder="Seleccione un producto (opcional)" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value={NO_PRODUCT}>Consulta general</SelectItem>
-                        {products.map((p) => (
-                          <SelectItem key={p.slug} value={p.slug}>
-                            {p.title}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Subject */}
-                  <div>
-                    <Label htmlFor="subject">Asunto <span className="text-red-500">*</span></Label>
-                    <Input id="subject" {...register("subject")} className="mt-2" placeholder="Asunto de su consulta" />
-                    {errors.subject && <p className="text-red-500 text-sm mt-1">{errors.subject.message}</p>}
-                  </div>
-
-                  {/* Message */}
-                  <div>
-                    <Label htmlFor="message">Mensaje <span className="text-red-500">*</span></Label>
-                    <Textarea
-                      id="message"
-                      {...register("message")}
-                      className="mt-2 min-h-[150px]"
-                      placeholder="Escriba su mensaje aquí..."
-                    />
-                    {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message.message}</p>}
-                  </div>
-
-                  {/* Privacy checkbox */}
-                  <div className="space-y-1.5">
-                    <div className="flex items-start gap-3">
-                      <Checkbox
-                        id="privacy"
-                        checked={watch("privacy_accepted")}
-                        onCheckedChange={(checked) =>
-                          setValue("privacy_accepted", checked === true, { shouldValidate: true })
-                        }
-                        className="mt-0.5"
-                      />
-                      <Label htmlFor="privacy" className="text-sm font-normal cursor-pointer leading-relaxed">
-                        He leído y acepto la{" "}
-                        <a href="/privacidad" target="_blank" className="text-primary hover:underline">
-                          Política de Privacidad
-                        </a>{" "}
-                        <span className="text-red-500">*</span>
-                      </Label>
-                    </div>
-                    {/* Error directly below the checkbox row */}
-                    {errors.privacy_accepted && (
-                      <p className="text-red-500 text-sm pl-7">{errors.privacy_accepted.message}</p>
+                    {/* Server error banner */}
+                    {submitStatus === "error" && (
+                      <div className="mb-5 p-3.5 bg-red-500/8 border border-red-500/25 rounded-xl flex items-center gap-3">
+                        <AlertCircle className="h-4.5 w-4.5 text-red-500 shrink-0" />
+                        <p className="text-[13px] text-red-400">
+                          Error al enviar. Inténtelo de nuevo o llámenos directamente.
+                        </p>
+                      </div>
                     )}
-                  </div>
 
-                  <Button type="submit" size="lg" className="w-full gap-2" disabled={isSubmitting}>
-                    {isSubmitting ? (
-                      "Enviando..."
+                    {/* Selected product card — shown instead of/above dropdown */}
+                    {activeProduct ? (
+                      <div className="mb-5 flex items-center justify-between gap-3 p-3.5 rounded-xl bg-primary/5 border border-primary/20">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <Package className="h-4 w-4 text-primary shrink-0" />
+                          <div className="min-w-0">
+                            <span className="text-[11px] font-medium text-primary uppercase tracking-wide block">
+                              Producto seleccionado
+                            </span>
+                            <p className="text-sm font-semibold text-foreground truncate">
+                              {activeProduct.title}
+                              {activeProduct.model && (
+                                <span className="font-normal text-muted-foreground ml-1">— {activeProduct.model}</span>
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setValue("product_interest", "", { shouldDirty: true })}
+                          className="shrink-0 text-[12px] text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+                          title="Cambiar a consulta general"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                          <span className="hidden sm:inline">Consulta general</span>
+                        </button>
+                      </div>
                     ) : (
-                      <>
-                        <Send className="h-5 w-5" />
-                        Enviar Mensaje
-                      </>
+                      /* Dropdown only when no specific product is selected */
+                      <Field>
+                        <Label className="text-sm">Producto de interés</Label>
+                        <Select
+                          value={productInterestValue || NO_PRODUCT}
+                          onValueChange={(v) =>
+                            setValue("product_interest", v === NO_PRODUCT ? "" : v, { shouldDirty: true })
+                          }
+                        >
+                          <SelectTrigger className="mt-1.5 h-10">
+                            <SelectValue placeholder="Seleccione un producto (opcional)" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value={NO_PRODUCT}>Consulta general</SelectItem>
+                            {products.map((p) => (
+                              <SelectItem key={p.slug} value={p.slug}>{p.title}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </Field>
                     )}
-                  </Button>
-                </form>
+
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 mt-1" noValidate>
+
+                      {/* Name + Email */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <Field error={errors.name?.message}>
+                          <Label htmlFor="name" className="text-sm">
+                            Nombre completo <span className="text-red-500">*</span>
+                          </Label>
+                          <Input id="name" {...register("name")} className="mt-1.5 h-10" placeholder="Su nombre completo" />
+                        </Field>
+                        <Field error={errors.email?.message}>
+                          <Label htmlFor="email" className="text-sm">
+                            Email <span className="text-red-500">*</span>
+                          </Label>
+                          <Input id="email" type="email" {...register("email")} className="mt-1.5 h-10" placeholder="su@email.com" />
+                        </Field>
+                        <Field error={errors.phone?.message}>
+                          <Label htmlFor="phone" className="text-sm">Teléfono</Label>
+                          <Input id="phone" {...register("phone")} className="mt-1.5 h-10" placeholder="+34 601 080 799" />
+                        </Field>
+                        <Field>
+                          <Label htmlFor="company" className="text-sm">Empresa</Label>
+                          <Input id="company" {...register("company")} className="mt-1.5 h-10" placeholder="Nombre de su empresa" />
+                        </Field>
+                      </div>
+
+                      {/* Subject */}
+                      <Field error={errors.subject?.message}>
+                        <Label htmlFor="subject" className="text-sm">
+                          Asunto <span className="text-red-500">*</span>
+                        </Label>
+                        <Input id="subject" {...register("subject")} className="mt-1.5 h-10" placeholder="Asunto de su consulta" />
+                      </Field>
+
+                      {/* Message */}
+                      <Field error={errors.message?.message}>
+                        <Label htmlFor="message" className="text-sm">
+                          Mensaje <span className="text-red-500">*</span>
+                        </Label>
+                        <Textarea
+                          id="message"
+                          {...register("message")}
+                          className="mt-1.5 min-h-[140px] resize-none"
+                          placeholder="Escriba su mensaje aquí..."
+                        />
+                      </Field>
+
+                      {/* Privacy */}
+                      <div className="rounded-xl border border-border bg-muted/30 p-4 space-y-2">
+                        <div className="flex items-start gap-3">
+                          <Checkbox
+                            id="privacy"
+                            checked={watch("privacy_accepted")}
+                            onCheckedChange={(c) =>
+                              setValue("privacy_accepted", c === true, { shouldValidate: true })
+                            }
+                            className="mt-0.5"
+                          />
+                          <Label htmlFor="privacy" className="text-sm font-normal cursor-pointer leading-relaxed">
+                            He leído y acepto la{" "}
+                            <a href="/privacidad" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">
+                              Política de Privacidad
+                            </a>{" "}
+                            <span className="text-red-500">*</span>
+                          </Label>
+                        </div>
+                        {errors.privacy_accepted && (
+                          <p className="text-[13px] text-red-500 pl-7">{errors.privacy_accepted.message}</p>
+                        )}
+                      </div>
+
+                      <Button type="submit" size="lg" className="w-full h-11 gap-2 text-sm font-semibold" disabled={isSubmitting}>
+                        {isSubmitting ? (
+                          <span className="flex items-center gap-2">
+                            <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                            Enviando...
+                          </span>
+                        ) : (
+                          <>
+                            <Send className="h-4 w-4" />
+                            Enviar Mensaje
+                          </>
+                        )}
+                      </Button>
+                    </form>
+                  </>
+                )}
               </div>
             </motion.div>
+
           </div>
         </div>
       </section>

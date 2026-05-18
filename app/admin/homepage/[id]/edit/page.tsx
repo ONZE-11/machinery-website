@@ -21,10 +21,11 @@ const editSchema = homepageSectionSchema.omit({ section_key: true })
 
 // Human-readable labels for each section key
 const SECTION_LABELS: Record<string, string> = {
-  hero:           "Home — main hero",
-  why_japanese:   "Why Japanese — homepage section + /por-que page",
-  hero_secondary: "Secondary / contact hero",
-  trust:          "About / trust section (/sobre-nosotros)",
+  hero:              "Home — main hero",
+  why_japanese_home: "Home — Why Japanese section",
+  why_japanese_page: "Page — ¿Por Qué Japonesa? (/por-que-maquinaria-japonesa)",
+  hero_secondary:    "Secondary / contact hero",
+  trust:             "About / trust section (/sobre-nosotros)",
 }
 
 export default function EditHomepageSectionPage() {

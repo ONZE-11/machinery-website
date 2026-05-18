@@ -26,7 +26,7 @@ export default async function HomePage() {
     getActiveBrands(),
     getActiveFAQs(5),
     getHomepageSection('hero'),
-    getHomepageSection('why_japanese'),
+    getHomepageSection('why_japanese_home'),
   ])
 
   const heroImageUrl = heroSection?.image ?? null

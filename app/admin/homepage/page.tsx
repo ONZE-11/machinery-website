@@ -10,10 +10,11 @@ import type { HomepageSection } from "@/types/database"
 import { Pencil, Loader2 } from "lucide-react"
 
 const SECTION_LABELS: Record<string, string> = {
-  hero:           "Home — main hero",
-  why_japanese:   "Why Japanese — homepage + /por-que page",
-  hero_secondary: "Secondary / contact hero",
-  trust:          "About / trust section (/sobre-nosotros)",
+  hero:              "Home — main hero",
+  why_japanese_home: "Home — Why Japanese section",
+  why_japanese_page: "Page — ¿Por Qué Japonesa? (/por-que-maquinaria-japonesa)",
+  hero_secondary:    "Secondary / contact hero",
+  trust:             "About / trust section (/sobre-nosotros)",
 }
 
 export default function HomepageSectionsPage() {

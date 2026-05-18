@@ -8,10 +8,11 @@ type Ctx = { params: Promise<{ id: string }> }
 
 // Pages revalidated when each section_key is saved
 const SECTION_PATHS: Record<string, string[]> = {
-  hero:           ['/'],
-  why_japanese:   ['/', '/por-que-maquinaria-japonesa'],
-  hero_secondary: ['/contacto'],
-  trust:          ['/sobre-nosotros'],
+  hero:               ['/'],
+  why_japanese_home:  ['/'],
+  why_japanese_page:  ['/por-que-maquinaria-japonesa'],
+  hero_secondary:     ['/contacto'],
+  trust:              ['/sobre-nosotros'],
 }
 
 export async function GET(_req: NextRequest, { params }: Ctx) {

@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 }
 
 export default async function PorQueJaponesaPage() {
-  const section = await getHomepageSection('hero_secondary')
+  const section = await getHomepageSection('why_japanese')
   const imageUrl = section?.custom_image || section?.image || null
 
   return (

@@ -17,8 +17,8 @@ function extractHomepagePath(url: string): string | null {
 /** Pages that must be revalidated when a given section_key changes. */
 const SECTION_PATHS: Record<string, string[]> = {
   hero:           ['/'],
-  why_japanese:   ['/'],
-  hero_secondary: ['/por-que-maquinaria-japonesa'],
+  why_japanese:   ['/', '/por-que-maquinaria-japonesa'],
+  hero_secondary: ['/contacto'],
   trust:          ['/sobre-nosotros'],
 }
 

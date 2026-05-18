@@ -69,10 +69,7 @@ export interface HomepageSection {
   title: string | null
   subtitle: string | null
   content: string | null
-  /** Permanent default image — never overwritten by admin uploads. */
   image: string | null
-  /** Admin-uploaded override. Takes priority over `image` when set. */
-  custom_image: string | null
   cta_text: string | null
   cta_link: string | null
   display_order: number

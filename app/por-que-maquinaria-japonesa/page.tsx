@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 
 export default async function PorQueJaponesaPage() {
   const section = await getHomepageSection('why_japanese')
-  const imageUrl = section?.custom_image || section?.image || null
+  const imageUrl = section?.image ?? null
 
   return (
     <div className="min-h-screen bg-background">

@@ -5,7 +5,6 @@ import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -13,20 +12,25 @@ import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ImageUploader } from "@/components/admin/image-uploader"
-import { homepageSectionSchema } from "@/lib/validations"
+import { homepageSectionSchema, type HomepageSectionFormData } from "@/lib/validations"
 import type { HomepageSection } from "@/types/database"
-import { ArrowLeft, Save, Loader2, ImageIcon, Trash2 } from "lucide-react"
+import { ArrowLeft, Save, Loader2 } from "lucide-react"
 
-// `image` is the protected default — excluded from the editable form schema
-const editSchema = homepageSectionSchema.omit({ section_key: true, image: true })
-type EditableFields = z.infer<typeof editSchema>
+type EditableFields = Omit<HomepageSectionFormData, "section_key">
+const editSchema = homepageSectionSchema.omit({ section_key: true })
+
+// Human-readable labels for each section key
+const SECTION_LABELS: Record<string, string> = {
+  hero:           "Home — main hero",
+  why_japanese:   "Why Japanese — homepage section + /por-que page",
+  hero_secondary: "Secondary / contact hero",
+  trust:          "About / trust section (/sobre-nosotros)",
+}
 
 export default function EditHomepageSectionPage() {
   const { id } = useParams<{ id: string }>()
   const router = useRouter()
-
   const [sectionKey, setSectionKey] = useState("")
-  const [defaultImage, setDefaultImage] = useState<string | null>(null) // read-only
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
 
@@ -44,12 +48,11 @@ export default function EditHomepageSectionPage() {
       .then((data: HomepageSection | null) => {
         if (data) {
           setSectionKey(data.section_key)
-          setDefaultImage(data.image ?? null)   // stored separately, never in form
           reset({
             title: data.title,
             subtitle: data.subtitle,
             content: data.content,
-            custom_image: data.custom_image,    // admin override
+            image: data.image,
             cta_text: data.cta_text,
             cta_link: data.cta_link,
             display_order: data.display_order,
@@ -78,10 +81,6 @@ export default function EditHomepageSectionPage() {
     router.refresh()
   }
 
-  const customImage = watch("custom_image")
-  // What the visitor currently sees
-  const effectiveImage = customImage || defaultImage
-
   if (loading) return (
     <div className="flex items-center justify-center py-24">
       <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -100,9 +99,16 @@ export default function EditHomepageSectionPage() {
           </Link>
           <div>
             <h1 className="text-3xl font-bold text-foreground">Edit Section</h1>
-            <p className="text-muted-foreground">
-              <code className="text-xs bg-muted px-1.5 py-0.5 rounded">{sectionKey}</code>
-            </p>
+            <div className="flex items-center gap-2 mt-0.5">
+              <code className="text-xs bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
+                {sectionKey}
+              </code>
+              {SECTION_LABELS[sectionKey] && (
+                <span className="text-xs text-muted-foreground">
+                  — {SECTION_LABELS[sectionKey]}
+                </span>
+              )}
+            </div>
           </div>
         </div>
         <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting} className="gap-2">
@@ -118,7 +124,7 @@ export default function EditHomepageSectionPage() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-          {/* ── Left column: text content + CTA ── */}
+          {/* ── Left: text content + CTA ── */}
           <div className="lg:col-span-2 space-y-6">
             <Card>
               <CardHeader><CardTitle>Content</CardTitle></CardHeader>
@@ -154,86 +160,25 @@ export default function EditHomepageSectionPage() {
             </Card>
           </div>
 
-          {/* ── Right column: image + settings ── */}
+          {/* ── Right: image + settings ── */}
           <div className="space-y-6">
-
-            {/* Image card */}
             <Card>
               <CardHeader><CardTitle>Image</CardTitle></CardHeader>
-              <CardContent className="space-y-5">
-
-                {/* Live preview — what visitors actually see */}
-                <div>
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
-                    Visitor preview
-                  </p>
-                  <div className="relative aspect-video rounded-lg overflow-hidden bg-muted border">
-                    {effectiveImage ? (
-                      <>
-                        <img
-                          src={effectiveImage}
-                          alt="Current section image"
-                          className="w-full h-full object-cover"
-                        />
-                        {customImage && (
-                          <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-[10px] font-semibold px-2 py-0.5 rounded-full">
-                            Custom override
-                          </span>
-                        )}
-                      </>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center h-full gap-2 text-muted-foreground">
-                        <ImageIcon className="h-6 w-6" />
-                        <span className="text-xs">No image set</span>
-                      </div>
-                    )}
-                  </div>
-                  {!customImage && defaultImage && (
-                    <p className="text-xs text-muted-foreground mt-1.5">
-                      Showing default image. Upload a custom image to override it.
-                    </p>
-                  )}
-                </div>
-
-                <div className="border-t border-border pt-4 space-y-3">
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Custom Image Override</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      Replaces the default. Remove to restore the original.
-                    </p>
-                  </div>
-
-                  <ImageUploader
-                    bucket="homepage"
-                    value={customImage ?? undefined}
-                    onUpload={(url) => setValue("custom_image", url, { shouldDirty: true })}
-                    onRemove={() => setValue("custom_image", null, { shouldDirty: true })}
-                    label="Upload override image"
-                    aspect="video"
-                  />
-
-                  {/* Explicit "Remove custom image" button when one is set */}
-                  {customImage && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="w-full gap-2 text-destructive hover:text-destructive border-destructive/30 hover:border-destructive/60"
-                      onClick={() => setValue("custom_image", null, { shouldDirty: true })}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      Remove Custom Image
-                    </Button>
-                  )}
-
-                  {errors.custom_image && (
-                    <p className="text-red-500 text-sm">{errors.custom_image.message}</p>
-                  )}
-                </div>
+              <CardContent>
+                <ImageUploader
+                  bucket="homepage"
+                  value={watch("image") ?? undefined}
+                  onUpload={(url) => setValue("image", url, { shouldDirty: true })}
+                  onRemove={() => setValue("image", null, { shouldDirty: true })}
+                  label="Section image"
+                  aspect="video"
+                />
+                {errors.image && (
+                  <p className="text-red-500 text-sm mt-2">{errors.image.message}</p>
+                )}
               </CardContent>
             </Card>
 
-            {/* Settings card */}
             <Card>
               <CardHeader><CardTitle>Settings</CardTitle></CardHeader>
               <CardContent className="space-y-4">
@@ -257,8 +202,8 @@ export default function EditHomepageSectionPage() {
                 </div>
               </CardContent>
             </Card>
-
           </div>
+
         </div>
       </form>
     </div>

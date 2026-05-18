@@ -29,9 +29,8 @@ export default async function HomePage() {
     getHomepageSection('why_japanese'),
   ])
 
-  // Priority: custom_image (admin override) → image (permanent default) → component fallback
-  const heroImageUrl = heroSection?.custom_image || heroSection?.image || null
-  const whyImageUrl  = whySection?.custom_image  || whySection?.image  || null
+  const heroImageUrl = heroSection?.image ?? null
+  const whyImageUrl  = whySection?.image  ?? null
 
   return (
     <div className="min-h-screen bg-background">

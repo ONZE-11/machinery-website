@@ -9,6 +9,13 @@ import { cn } from "@/lib/utils"
 import type { HomepageSection } from "@/types/database"
 import { Pencil, Loader2 } from "lucide-react"
 
+const SECTION_LABELS: Record<string, string> = {
+  hero:           "Home — main hero",
+  why_japanese:   "Why Japanese — homepage + /por-que page",
+  hero_secondary: "Secondary / contact hero",
+  trust:          "About / trust section (/sobre-nosotros)",
+}
+
 export default function HomepageSectionsPage() {
   const [sections, setSections] = useState<HomepageSection[]>([])
   const [loading, setLoading] = useState(true)
@@ -59,17 +66,12 @@ export default function HomepageSectionsPage() {
               <CardContent className="p-5">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-3 flex-1 min-w-0">
-                    {(section.custom_image || section.image) && (
-                      <div className="relative shrink-0">
-                        <img
-                          src={section.custom_image || section.image!}
-                          alt={section.title ?? section.section_key}
-                          className="w-16 h-12 object-cover rounded"
-                        />
-                        {section.custom_image && (
-                          <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-primary border-2 border-background" title="Custom image active" />
-                        )}
-                      </div>
+                    {section.image && (
+                      <img
+                        src={section.image}
+                        alt={section.title ?? section.section_key}
+                        className="w-16 h-12 object-cover rounded shrink-0"
+                      />
                     )}
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 mb-1">
@@ -88,6 +90,11 @@ export default function HomepageSectionsPage() {
                           {section.active ? "Active" : "Inactive"}
                         </Badge>
                       </div>
+                      {SECTION_LABELS[section.section_key] && (
+                        <p className="text-xs text-primary/70 font-medium truncate">
+                          {SECTION_LABELS[section.section_key]}
+                        </p>
+                      )}
                       {section.title && (
                         <p className="font-medium text-foreground truncate">{section.title}</p>
                       )}

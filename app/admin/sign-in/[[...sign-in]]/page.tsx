@@ -7,7 +7,6 @@ export default function Page() {
         routing="path"
         path="/admin/sign-in"
         forceRedirectUrl="/admin"
-        fallbackRedirectUrl="/admin"
       />
     </div>
   )

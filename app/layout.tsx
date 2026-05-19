@@ -120,8 +120,10 @@ export default function RootLayout({
         className="font-sans antialiased bg-background text-foreground"
         suppressHydrationWarning
       >
-        {children}
-        {process.env.NODE_ENV === "production" && <Analytics />}
+        <ClerkProvider>
+          {children}
+          {process.env.NODE_ENV === "production" && <Analytics />}
+        </ClerkProvider>
       </body>
     </html>
   );

@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { headers } from "next/headers"
 import { currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { AdminLayoutClient } from "./admin-layout-client"
@@ -18,13 +19,21 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
+  const pathname = (await headers()).get("x-pathname") ?? ""
+
+  // The sign-in page lives under /admin/ so this layout wraps it too.
+  // Without this guard, the auth check below would redirect unauthenticated
+  // visitors back to /admin/sign-in — creating an infinite redirect loop.
+  if (pathname.startsWith("/admin/sign-in")) {
+    return <>{children}</>
+  }
+
   const user = await currentUser()
 
   if (!user) {
-    redirect("/sign-in")
+    redirect("/admin/sign-in")
   }
 
-  // Resolve primary email (fall back to first address if primary not set)
   const primaryEmail =
     user.emailAddresses.find((e) => e.id === user.primaryEmailAddressId)
       ?.emailAddress ?? user.emailAddresses[0]?.emailAddress

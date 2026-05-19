@@ -112,12 +112,10 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
-      <body className="font-sans antialiased bg-background text-foreground" suppressHydrationWarning>
-        <ClerkProvider>
-          {children}
-        </ClerkProvider>
-        {process.env.NODE_ENV === 'production' && <Analytics />}
-      </body>
+     <body className="font-sans antialiased bg-background text-foreground" suppressHydrationWarning>
+  {children}
+  {process.env.NODE_ENV === 'production' && <Analytics />}
+</body>
     </html>
   )
 }

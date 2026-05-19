@@ -5,6 +5,10 @@ const isProtectedRoute = createRouteMatcher([
   "/admin(.*)",
 ])
 
+const isPublicAdminRoute = createRouteMatcher([
+  "/admin/sign-in(.*)",
+])
+
 const isClerkConfigured =
   !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY &&
   !!process.env.CLERK_SECRET_KEY
@@ -16,7 +20,7 @@ export default clerkMiddleware(async (auth, req) => {
     return response
   }
 
-  if (isProtectedRoute(req)) {
+  if (isProtectedRoute(req) && !isPublicAdminRoute(req)) {
     await auth.protect()
   }
 

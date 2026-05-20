@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 
 const isProtectedRoute = createRouteMatcher([
   "/admin(.*)",
+  "/api/admin(.*)",
 ])
 
 const isPublicAdminRoute = createRouteMatcher([
@@ -43,7 +44,7 @@ export default clerkMiddleware(async (auth, req) => {
 
 export const config = {
   matcher: [
-    "/((?!_next|.*\\..*|favicon.ico|sitemap.xml|robots.txt).*)",
-    "/(api|trpc)(.*)",
+    "/admin/:path*",
+    "/api/admin/:path*",
   ],
 }

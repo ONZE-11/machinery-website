@@ -1,178 +1,134 @@
 /**
- * TEMPORARY PREVIEW PAGE — delete after icon approval.
- * Visit /icon-preview in dev to compare old Lucide icons vs new custom SVGs.
+ * TEMPORARY — delete /app/icon-preview after approval.
+ * Shows ONLY the two redesigned icons for approval before footer integration.
  */
-import {
-  Shovel, Tractor, Cog, ArrowUpFromLine, HardHat, Forklift,
-} from 'lucide-react'
-import {
-  MiniExcavadoraIcon,
-  MiniTractorIcon,
-  MiniCargadoraIcon,
-  ElevadoresIcon,
-  CarretillasIcon,
-  EquiposIcon,
-  MachineryFallbackIcon,
-} from '@/components/ui/machinery-icons'
+import { MiniExcavadoraIcon, ElevadoresIcon } from '@/components/ui/machinery-icons'
 
-const categories = [
+const icons = [
   {
-    slug: 'mini-excavadoras',
     name: 'Mini Excavadoras',
-    OldIcon: Shovel,
-    NewIcon: MiniExcavadoraIcon,
+    slug: 'mini-excavadoras',
+    Icon: MiniExcavadoraIcon,
+    description: 'Track hull + idler/sprocket wheels + 3-segment arm (boom → stick → bucket scoop)',
   },
   {
-    slug: 'mini-tractores',
-    name: 'Mini Tractores',
-    OldIcon: Tractor,
-    NewIcon: MiniTractorIcon,
-  },
-  {
-    slug: 'mini-cargadoras',
-    name: 'Mini Cargadoras',
-    OldIcon: Cog,
-    NewIcon: MiniCargadoraIcon,
-  },
-  {
-    slug: 'elevadores-compactos',
     name: 'Elevadores Compactos',
-    OldIcon: ArrowUpFromLine,
-    NewIcon: ElevadoresIcon,
-  },
-  {
-    slug: 'carretillas-elevadoras',
-    name: 'Carretillas Elevadoras',
-    OldIcon: Forklift,
-    NewIcon: CarretillasIcon,
-  },
-  {
-    slug: 'equipos-construccion',
-    name: 'Equipos de Construcción',
-    OldIcon: HardHat,
-    NewIcon: EquiposIcon,
-  },
-  {
-    slug: 'categoria-nueva',
-    name: 'Categoría Nueva (fallback)',
-    OldIcon: HardHat,
-    NewIcon: MachineryFallbackIcon,
+    slug: 'elevadores-compactos',
+    Icon: ElevadoresIcon,
+    description: 'Wide platform + railing + scissor X with pivot pin + wheeled chassis base',
   },
 ]
 
-const sizes = [
-  { label: '14 px — Footer size', cls: 'w-3.5 h-3.5' },
-  { label: '20 px', cls: 'w-5 h-5' },
-  { label: '32 px', cls: 'w-8 h-8' },
-  { label: '48 px', cls: 'w-12 h-12' },
+const sizes: Array<{ label: string; px: number; cls: string }> = [
+  { label: '14 px — footer', px: 14, cls: 'w-3.5 h-3.5' },
+  { label: '20 px',          px: 20, cls: 'w-5 h-5'   },
+  { label: '32 px',          px: 32, cls: 'w-8 h-8'   },
+  { label: '64 px',          px: 64, cls: 'w-16 h-16' },
+  { label: '96 px',          px: 96, cls: 'w-24 h-24' },
 ]
 
 export default function IconPreviewPage() {
   return (
-    <div className="min-h-screen bg-background p-10 space-y-14">
-      <div>
-        <h1 className="text-3xl font-bold mb-1">Icon Preview</h1>
-        <p className="text-muted-foreground text-sm">
-          Temporary page — delete <code>/app/icon-preview</code> after approval.
-        </p>
-      </div>
+    <div className="min-h-screen bg-background p-8 space-y-12 font-sans">
 
-      {/* Side-by-side comparison at multiple sizes */}
-      <section className="space-y-6">
-        <h2 className="text-xl font-semibold">Old (Lucide) vs New (Custom SVG)</h2>
-
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-sm">
-            <thead>
-              <tr className="border-b border-border">
-                <th className="text-left py-3 pr-6 font-medium text-muted-foreground w-52">Category</th>
-                {sizes.map((s) => (
-                  <th key={s.label} className="text-center py-3 px-4 font-medium text-muted-foreground" colSpan={2}>
-                    {s.label}
-                  </th>
-                ))}
-              </tr>
-              <tr className="border-b border-border bg-muted/30">
-                <th className="py-2 pr-6" />
-                {sizes.map((s) => (
-                  <>
-                    <th key={`${s.label}-old`} className="py-2 px-4 text-xs text-muted-foreground font-normal">Old</th>
-                    <th key={`${s.label}-new`} className="py-2 px-4 text-xs text-primary font-normal">New</th>
-                  </>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {categories.map((cat, i) => (
-                <tr key={cat.slug} className={`border-b border-border/50 ${i % 2 === 0 ? '' : 'bg-muted/10'}`}>
-                  <td className="py-4 pr-6 font-medium">{cat.name}</td>
-                  {sizes.map((s) => (
-                    <>
-                      {/* Old Lucide icon */}
-                      <td key={`${cat.slug}-${s.label}-old`} className="py-4 px-4 text-center">
-                        <div className="inline-flex items-center justify-center w-9 h-9 rounded bg-secondary/60 border border-border">
-                          <cat.OldIcon className={`${s.cls} text-muted-foreground`} />
-                        </div>
-                      </td>
-                      {/* New custom icon */}
-                      <td key={`${cat.slug}-${s.label}-new`} className="py-4 px-4 text-center">
-                        <div className="inline-flex items-center justify-center w-9 h-9 rounded bg-primary/8 border border-primary/20">
-                          <cat.NewIcon className={`${s.cls} text-primary`} />
-                        </div>
-                      </td>
-                    </>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      {/* Footer simulation — exactly as it appears */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-semibold">Footer Context Simulation</h2>
+      <header>
+        <h1 className="text-2xl font-bold mb-1">Icon Preview — Pending Approval</h1>
         <p className="text-sm text-muted-foreground">
-          How the new icons look inside the actual footer link layout.
+          Review the two redesigned icons below. If approved, run{' '}
+          <code className="bg-muted px-1 rounded">integrate-icons</code>{' '}
+          to update the footer. Delete <code className="bg-muted px-1 rounded">/app/icon-preview</code> afterwards.
         </p>
+      </header>
 
-        <div className="max-w-xs bg-card border border-border rounded-lg p-6 space-y-1">
-          <p className="font-serif text-lg tracking-wider text-foreground mb-4">CATÁLOGO</p>
-          {categories.slice(0, 6).map((cat) => (
-            <div
-              key={cat.slug}
-              className="group flex items-center gap-2.5 text-sm text-muted-foreground cursor-pointer hover:text-primary transition-colors"
-            >
-              <span className="shrink-0 w-6 h-6 rounded flex items-center justify-center bg-primary/8 group-hover:bg-primary/15 transition-colors">
-                <cat.NewIcon className="w-3.5 h-3.5 text-primary/70 group-hover:text-primary transition-colors" />
-              </span>
-              <span className="truncate leading-snug">{cat.name}</span>
-            </div>
-          ))}
-          <div className="pt-1">
-            <span className="text-sm text-primary/80 font-medium">Ver todo →</span>
-          </div>
-        </div>
-      </section>
-
-      {/* Solo display on white and dark backgrounds */}
+      {/* ── SIZE MATRIX ──────────────────────────────────────────────────── */}
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold">Icons on Light / Dark Backgrounds</h2>
-        <div className="flex gap-6 flex-wrap">
-          {[
-            { bg: 'bg-white border border-border', color: 'text-primary' },
-            { bg: 'bg-foreground', color: 'text-background' },
-            { bg: 'bg-primary', color: 'text-primary-foreground' },
-            { bg: 'bg-secondary', color: 'text-foreground' },
-          ].map(({ bg, color }, bi) => (
-            <div key={bi} className={`rounded-lg p-4 ${bg} flex gap-4 flex-wrap`}>
-              {categories.slice(0, 6).map((cat) => (
-                <cat.NewIcon key={cat.slug} className={`w-8 h-8 ${color}`} />
-              ))}
+        <h2 className="font-semibold text-lg">Size comparison</h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {icons.map(({ name, Icon, description }) => (
+            <div key={name} className="border border-border rounded-xl p-6 space-y-5 bg-card">
+              <div>
+                <p className="font-semibold">{name}</p>
+                <p className="text-xs text-muted-foreground mt-1">{description}</p>
+              </div>
+
+              {/* Size grid */}
+              <div className="flex items-end gap-5 flex-wrap">
+                {sizes.map(({ label, cls }) => (
+                  <div key={label} className="flex flex-col items-center gap-2">
+                    <Icon className={`${cls} text-foreground`} />
+                    <span className="text-[10px] text-muted-foreground whitespace-nowrap">{label}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* On coloured backgrounds */}
+              <div className="flex gap-3 flex-wrap">
+                {[
+                  { bg: 'bg-background border border-border', fg: 'text-foreground',         label: 'light bg' },
+                  { bg: 'bg-foreground',                       fg: 'text-background',         label: 'dark bg'  },
+                  { bg: 'bg-primary',                          fg: 'text-primary-foreground', label: 'primary'  },
+                ].map(({ bg, fg, label }) => (
+                  <div key={label} className="flex flex-col items-center gap-1">
+                    <span className={`rounded p-2 ${bg} flex items-center justify-center`}>
+                      <Icon className={`w-6 h-6 ${fg}`} />
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">{label}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>
       </section>
+
+      {/* ── FOOTER SIMULATION ─────────────────────────────────────────────── */}
+      <section className="space-y-4">
+        <h2 className="font-semibold text-lg">Footer simulation (exact layout)</h2>
+
+        <div className="max-w-xs bg-card border border-border rounded-xl p-6">
+          <p className="font-serif text-lg tracking-wider mb-4">CATÁLOGO</p>
+          <ul className="space-y-2.5">
+            {[
+              { slug: 'mini-excavadoras',    name: 'Mini Excavadoras',    Icon: MiniExcavadoraIcon },
+              { slug: 'elevadores-compactos', name: 'Elevadores Compactos', Icon: ElevadoresIcon },
+              { slug: 'other-a', name: 'Mini Tractores',         Icon: () => <span className="w-3.5 h-3.5 block bg-muted-foreground/30 rounded-sm" /> },
+              { slug: 'other-b', name: 'Mini Cargadoras',        Icon: () => <span className="w-3.5 h-3.5 block bg-muted-foreground/30 rounded-sm" /> },
+              { slug: 'other-c', name: 'Carretillas Elevadoras', Icon: () => <span className="w-3.5 h-3.5 block bg-muted-foreground/30 rounded-sm" /> },
+              { slug: 'other-d', name: 'Equipos de Construcción',Icon: () => <span className="w-3.5 h-3.5 block bg-muted-foreground/30 rounded-sm" /> },
+            ].map(({ slug, name, Icon }) => (
+              <li key={slug} className="group flex items-center gap-2.5 text-sm text-muted-foreground cursor-pointer hover:text-primary transition-colors">
+                <span className="shrink-0 w-6 h-6 rounded flex items-center justify-center bg-primary/8 group-hover:bg-primary/15 transition-colors">
+                  <Icon className="w-3.5 h-3.5 text-primary/70 group-hover:text-primary transition-colors" />
+                </span>
+                <span className="truncate">{name}</span>
+              </li>
+            ))}
+            <li className="pt-1">
+              <span className="text-sm text-primary/80 font-medium">Ver todo →</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      {/* ── RAW SVG PATHS (for developer reference) ───────────────────────── */}
+      <section className="space-y-4">
+        <h2 className="font-semibold text-lg">Large isolated view (48 px)</h2>
+        <div className="flex gap-12 flex-wrap">
+          {icons.map(({ name, Icon }) => (
+            <div key={name} className="flex flex-col items-center gap-3">
+              <div className="w-20 h-20 rounded-xl border border-border flex items-center justify-center bg-card">
+                <Icon className="w-12 h-12 text-primary" />
+              </div>
+              <div className="w-20 h-20 rounded-xl flex items-center justify-center bg-foreground">
+                <Icon className="w-12 h-12 text-background" />
+              </div>
+              <p className="text-xs text-muted-foreground text-center max-w-[80px]">{name}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
     </div>
   )
 }

@@ -9,13 +9,13 @@ const icons = [
     name: 'Mini Excavadoras',
     slug: 'mini-excavadoras',
     Icon: MiniExcavadoraIcon,
-    description: 'Track hull + idler/sprocket wheels + 3-segment arm (boom → stick → bucket scoop)',
+    description: 'Rounded-rect track + two wheel circles + boxy cab + steep boom → stick → C-bucket scoop',
   },
   {
     name: 'Elevadores Compactos',
     slug: 'elevadores-compactos',
     Icon: ElevadoresIcon,
-    description: 'Wide platform + railing + scissor X with pivot pin + wheeled chassis base',
+    description: 'Rail bar + wide platform deck + scissor X arms + pivot pin + wheeled chassis base',
   },
 ]
 

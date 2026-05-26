@@ -19,36 +19,31 @@ const base: IconProps = {
 }
 
 // ─── Mini Excavadora ─────────────────────────────────────────────────────────
-// v3 — real geometry:
-//   • Track undercarriage: rounded-end oval hull + idler wheel (left) + drive
-//     sprocket (right) visible as circles at each end of the hull.
-//   • Rotating upper structure: single outline path — heavy counterweight hump
-//     at rear, flat cab roof, angled windshield at front.
-//   • Three-segment arm: boom (steep rise), stick (elbow down-right),
-//     bucket (quadratic-bezier scoop, convex outer face, mouth open toward body).
+// Side profile silhouette — v4:
+//   • Rubber track: rounded rect at bottom + two visible wheel circles.
+//   • Cab: plain rectangle sitting on the track (left of centre).
+//   • Arm system: boom (steep 65° rise) → stick (elbow down-right) →
+//     bucket (quadratic-bezier C-scoop, opening facing body).
 
 export function MiniExcavadoraIcon(props: IconProps) {
   return (
     <svg {...base} {...props}>
-      {/* ── UNDERCARRIAGE ─────────────────────────────────────────────────── */}
-      {/* Rubber track hull — elongated oval, rounded ends for idler/sprocket */}
-      <path d="M3 22 Q1 22 1 19 Q1 16 3 16 L14 16 Q16 16 16 19 Q16 22 14 22 Z" />
-      {/* Front idler wheel (left end of track) */}
-      <circle cx="3" cy="19" r="1.8" />
-      {/* Rear drive sprocket (right end of track) */}
-      <circle cx="14" cy="19" r="1.8" />
+      {/* Track — rounded rectangle, flat underside on the ground */}
+      <rect x="1" y="18" width="14.5" height="4.5" rx="2.25" />
+      {/* Left idler wheel */}
+      <circle cx="3.5" cy="20.25" r="1.9" />
+      {/* Right drive sprocket */}
+      <circle cx="13" cy="20.25" r="1.9" />
 
-      {/* ── ROTATING UPPER STRUCTURE ──────────────────────────────────────── */}
-      {/* Counterweight hump (rear/left) → flat cab roof → angled windshield → front face */}
-      <path d="M3 16 Q2.5 14 2.5 12.5 Q2.5 11 4 11 H10 L11 12 V16" />
+      {/* Cab — boxy rectangle, sits on top of track */}
+      <rect x="2" y="12" width="9" height="6" />
 
-      {/* ── BOOM–STICK–BUCKET ARM SYSTEM ──────────────────────────────────── */}
-      {/* Boom: rises steeply from front of upper structure */}
-      <line x1="10.5" y1="12" x2="16" y2="7" />
-      {/* Stick (forearm): elbow joint, hangs down-right from boom tip */}
-      <line x1="16" y1="7" x2="20" y2="13" />
-      {/* Bucket: quadratic scoop — convex back face, open mouth faces dig direction */}
-      <path d="M20 13 Q22.5 16 20.5 18.5 L18.5 16" />
+      {/* Boom — rises steeply (~65°) from cab top-right pivot */}
+      <line x1="10" y1="12" x2="15" y2="3" />
+      {/* Stick — elbow joint, downward-right from boom tip */}
+      <line x1="15" y1="3" x2="21.5" y2="10.5" />
+      {/* Bucket — C-curve scoop; outer face convex, mouth opens toward body */}
+      <path d="M21.5 10.5 Q23 13.5 21 17 L19 14" />
     </svg>
   )
 }
@@ -98,36 +93,29 @@ export function MiniCargadoraIcon(props: IconProps) {
 }
 
 // ─── Elevadores Compactos ─────────────────────────────────────────────────────
-// v3 — real scissor-lift geometry:
-//   • Wide work platform at top (with 3-post safety railing above).
-//   • Two crossing scissor arms forming a real X mechanism with a visible
-//     pivot pin (circle) at the exact mathematical crossing point.
-//   • Rectangular chassis base below the scissor.
-//   • Two drive wheels hanging from the chassis.
-// The wide-platform + X-mechanism + wheeled-base silhouette is immediately
-// recognisable as a scissor-type aerial work platform / compact lift.
+// Scissor-lift side silhouette — v4:
+//   • Safety rail bar (thin line above platform) + wide platform deck.
+//   • Two crossing scissor arms (X) with pivot pin at mathematical crossing.
+//   • Rectangular chassis base + two caster wheels below.
 
 export function ElevadoresIcon(props: IconProps) {
   return (
     <svg {...base} {...props}>
-      {/* ── WORK PLATFORM ─────────────────────────────────────────────────── */}
-      {/* Safety guard rail — three uprights + top bar */}
-      <path d="M5 4 V2 H19 V4" />
-      {/* Platform deck (wide, prominent) */}
-      <rect x="2" y="4" width="20" height="2.5" rx="0.5" />
+      {/* Safety rail — single top bar only (reads cleanly at small sizes) */}
+      <line x1="4" y1="2" x2="20" y2="2" />
+      {/* Platform deck — wide, prominent */}
+      <rect x="2" y="3" width="20" height="2.5" rx="0.5" />
 
-      {/* ── SCISSOR MECHANISM ─────────────────────────────────────────────── */}
-      {/* Left arm: lower-left → upper-right (attaches to platform base at right) */}
-      <line x1="5" y1="18" x2="17" y2="6.5" />
-      {/* Right arm: lower-right → upper-left (attaches to platform base at left) */}
-      <line x1="19" y1="18" x2="7" y2="6.5" />
-      {/* Pivot pin — at the exact crossing point of both arms (x=12, y≈11.3) */}
-      <circle cx="12" cy="11.5" r="1.2" />
+      {/* Scissor arm — lower-left → upper-right */}
+      <line x1="5" y1="18" x2="18" y2="5.5" />
+      {/* Scissor arm — lower-right → upper-left */}
+      <line x1="19" y1="18" x2="6" y2="5.5" />
+      {/* Pivot pin at exact crossing (x=12, y≈11.2) */}
+      <circle cx="12" cy="11.2" r="1.2" />
 
-      {/* ── CHASSIS BASE ──────────────────────────────────────────────────── */}
-      {/* Base frame */}
+      {/* Chassis base frame */}
       <rect x="3" y="18" width="18" height="3" rx="1" />
-      {/* Drive / caster wheels */}
+      {/* Caster wheels */}
       <circle cx="6.5" cy="22" r="1.5" />
       <circle cx="17.5" cy="22" r="1.5" />
     </svg>

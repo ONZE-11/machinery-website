@@ -19,23 +19,22 @@ const base: IconProps = {
 }
 
 // ─── Mini Excavadora ─────────────────────────────────────────────────────────
-// Side profile: rubber-tracked base, compact cab, articulated boom + bucket.
+// v2 — wider track, cab as single outline path, two-segment articulated arm,
+//      curved bucket scoop replacing the flat parallelogram.
 
 export function MiniExcavadoraIcon(props: IconProps) {
   return (
     <svg {...base} {...props}>
-      {/* Rubber track — elongated rounded rectangle */}
-      <rect x="1" y="17" width="15" height="5" rx="2.5" />
-      {/* Cab body */}
-      <rect x="2" y="12" width="7" height="5" />
-      {/* Cab roof — slightly angled trapezoid */}
-      <path d="M2 12 L3.5 9.5 H8.5 L10 12" />
-      {/* Boom arm — main diagonal going upper-right */}
-      <path d="M9.5 10.5 L18 7" />
-      {/* Forearm — elbow going lower-right */}
-      <line x1="18" y1="7" x2="21" y2="11" />
-      {/* Bucket — open quad at arm tip */}
-      <path d="M21 11 L22.5 14 L19 15 L18 12 Z" />
+      {/* Rubber track — wide, low-profile base */}
+      <rect x="1" y="17" width="16" height="5" rx="2.5" />
+      {/* Rotating upper body — cab outline as one path (left wall / roof / right wall) */}
+      <path d="M3 17 V13 L5 10 H11 L12 13 V17" />
+      {/* Boom — rises steeply from right side of upper body */}
+      <path d="M11.5 11.5 L19 7" />
+      {/* Stick (forearm) — hangs down-right from boom tip, clear elbow angle */}
+      <line x1="19" y1="7" x2="21" y2="13" />
+      {/* Bucket — curved scoop: convex outer face, open mouth faces dig direction */}
+      <path d="M21 13 Q23 16 20 18 L18 15" />
     </svg>
   )
 }
@@ -85,24 +84,27 @@ export function MiniCargadoraIcon(props: IconProps) {
 }
 
 // ─── Elevadores Compactos ─────────────────────────────────────────────────────
-// Side profile: elevated work platform, X-crossing scissor mechanism, wheeled base.
+// v2 — switched from generic scissor-X to articulated boom lift (knuckle boom).
+//      Distinct silhouette: wheeled chassis → turntable body → steep lower boom
+//      → shallow upper jib (knuckle joint) → aerial work basket with railing.
 
 export function ElevadoresIcon(props: IconProps) {
   return (
     <svg {...base} {...props}>
-      {/* Guard railing above platform */}
-      <path d="M4 3 V1 H20 V3" />
-      {/* Work platform */}
-      <rect x="2" y="3" width="20" height="3" rx="0.5" />
-      {/* Left scissor arm (lower-left → upper-right) */}
-      <line x1="7" y1="17" x2="15" y2="6" />
-      {/* Right scissor arm (lower-right → upper-left) — crossing */}
-      <line x1="17" y1="17" x2="9" y2="6" />
-      {/* Wheeled chassis base */}
-      <rect x="4" y="17" width="16" height="4" rx="1" />
-      {/* Caster wheels */}
-      <circle cx="7" cy="22" r="1" />
-      <circle cx="17" cy="22" r="1" />
+      {/* Wheeled chassis */}
+      <circle cx="5" cy="21" r="2" />
+      <circle cx="19" cy="21" r="2" />
+      <line x1="5" y1="19" x2="19" y2="19" />
+      {/* Turntable / upper body */}
+      <rect x="8" y="15" width="8" height="4" />
+      {/* Lower boom — steep angle rising from turntable pivot */}
+      <line x1="11" y1="15" x2="14" y2="7" />
+      {/* Upper jib — shallower angle, creates clear knuckle articulation */}
+      <line x1="14" y1="7" x2="18" y2="6" />
+      {/* Aerial work basket */}
+      <rect x="18" y="2" width="5" height="4" rx="0.5" />
+      {/* Safety railing on platform */}
+      <path d="M19 2 V1 H22 V2" />
     </svg>
   )
 }

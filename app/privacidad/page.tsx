@@ -25,7 +25,7 @@ export default function PrivacidadPage() {
 
           <div className="prose prose-slate max-w-none">
             <p className="text-muted-foreground mb-6">
-              <strong>Última actualización:</strong> 1 de enero de 2024
+              <strong>Última actualización:</strong> 26 de mayo de 2026
             </p>
 
             <section className="mb-8">
@@ -41,7 +41,7 @@ export default function PrivacidadPage() {
               <ul className="text-muted-foreground space-y-2 list-disc pl-6">
                 <li><strong>Razón Social:</strong> {brand.legalName}</li>
                 <li><strong>NIF:</strong> B12345678</li>
-                <li><strong>Dirección:</strong> Polígono Industrial La Maquinaria, Nave 15, 28001 Madrid, España</li>
+                <li><strong>Dirección:</strong> [Dirección completa], Valencia (Comunitat Valenciana), España</li>
                 <li><strong>Email:</strong> {brand.emails.privacy}</li>
                 <li><strong>Teléfono:</strong> +34 601 080 799</li>
               </ul>

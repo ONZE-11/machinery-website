@@ -8,7 +8,7 @@ import { getHomepageSection } from "@/lib/supabase/queries"
 export const metadata: Metadata = {
   title: "Sobre Nosotros | Especialistas en Maquinaria Japonesa",
   description:
-    "Conozca nuestra historia, misión y compromiso con la calidad. Más de 15 años importando maquinaria japonesa premium para empresas españolas.",
+    "Conozca nuestra historia, misión y compromiso con la calidad. Especialistas en importación de maquinaria japonesa de segunda mano para empresas y particulares en España.",
   keywords: [
     "sobre nosotros",
     "importador maquinaria japonesa",

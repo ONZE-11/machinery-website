@@ -25,7 +25,7 @@ export default function CookiesPage() {
 
           <div className="prose prose-slate max-w-none">
             <p className="text-muted-foreground mb-6">
-              <strong>Última actualización:</strong> 1 de enero de 2024
+              <strong>Última actualización:</strong> 26 de mayo de 2026
             </p>
 
             <section className="mb-8">

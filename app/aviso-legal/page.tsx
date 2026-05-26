@@ -25,7 +25,7 @@ export default function AvisoLegalPage() {
 
           <div className="prose prose-slate max-w-none">
             <p className="text-muted-foreground mb-6">
-              <strong>Última actualización:</strong> 1 de enero de 2024
+              <strong>Última actualización:</strong> 26 de mayo de 2026
             </p>
 
             <section className="mb-8">
@@ -35,16 +35,16 @@ export default function AvisoLegalPage() {
               <p className="text-muted-foreground mb-4">
                 En cumplimiento del artículo 10 de la Ley 34/2002, de 11 de
                 julio, de Servicios de la Sociedad de la Información y de
-                Comercio Electrónico (LSSICE), se exponen los datos
+                Comercio Electrónico (LSSI-CE), se exponen los datos
                 identificativos del titular del sitio web:
               </p>
               <ul className="text-muted-foreground space-y-2 list-disc pl-6">
                 <li><strong>Denominación social:</strong> {brand.legalName}</li>
                 <li><strong>NIF:</strong> B12345678</li>
-                <li><strong>Domicilio social:</strong> Polígono Industrial La Maquinaria, Nave 15, 28001 Madrid, España</li>
+                <li><strong>Domicilio social:</strong> [Dirección completa], Valencia (Comunitat Valenciana), España</li>
                 <li><strong>Teléfono:</strong> +34 601 080 799</li>
                 <li><strong>Email:</strong> {brand.emails.legal}</li>
-                <li><strong>Inscripción:</strong> Registro Mercantil de Madrid, Tomo XXXXX, Folio XXX, Hoja M-XXXXXX</li>
+                <li><strong>Inscripción:</strong> Registro Mercantil de Valencia, Tomo [____], Folio [___], Hoja V-[______]</li>
               </ul>
             </section>
 
@@ -89,8 +89,8 @@ export default function AvisoLegalPage() {
                 enunciativo pero no limitativo: textos, fotografías, gráficos,
                 imágenes, iconos, tecnología, software, enlaces y demás
                 contenidos audiovisuales, así como su diseño gráfico y códigos
-                fuente, son propiedad intelectual de Maquinaria Japonesa
-                Premium S.L. o de terceros que han autorizado su uso.
+                fuente, son propiedad intelectual de {brand.legalName} o de
+                terceros que han autorizado su uso.
               </p>
               <p className="text-muted-foreground mb-4">
                 Queda prohibida la reproducción total o parcial de cualquiera
@@ -181,10 +181,10 @@ export default function AvisoLegalPage() {
               <p className="text-muted-foreground mb-4">
                 Las presentes condiciones se rigen por la legislación española.
                 Para la resolución de cualquier controversia que pudiera
-                derivarse del acceso al sitio web, el usuario y Maquinaria
-                Japonesa Premium S.L. acuerdan someterse expresamente a los
-                Juzgados y Tribunales de Madrid, con renuncia expresa a
-                cualquier otro fuero que pudiera corresponderles.
+                derivarse del acceso al sitio web, el usuario y {brand.legalName}{" "}
+                acuerdan someterse, en la medida en que la legislación lo
+                permita, a los Juzgados y Tribunales de Valencia, con renuncia
+                expresa a cualquier otro fuero que pudiera corresponderles.
               </p>
             </section>
 
@@ -210,12 +210,12 @@ export default function AvisoLegalPage() {
                 la Comisión Europea facilita una plataforma de resolución de
                 litigios en línea que se encuentra disponible en:{" "}
                 <a
-                  href="https://ec.europa.eu/consumers/odr"
+                  href="https://consumer-redress.ec.europa.eu/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-primary hover:underline"
                 >
-                  https://ec.europa.eu/consumers/odr
+                  https://consumer-redress.ec.europa.eu/
                 </a>
               </p>
             </section>

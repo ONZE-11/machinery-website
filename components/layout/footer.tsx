@@ -197,8 +197,8 @@ export async function Footer() {
             </Link>
 
             <p className="text-muted-foreground text-sm mb-6 max-w-sm">
-              Especialistas en importación de maquinaria japonesa de segunda mano.
-              Más de 15 años llevando la calidad japonesa a España.
+              Especialistas en importación de maquinaria japonesa de segunda mano,
+              con servicio personalizado y entrega a toda España.
             </p>
 
             <div className="space-y-3">

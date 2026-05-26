@@ -12,6 +12,7 @@ import {
   getActiveBrands,
 } from '@/lib/supabase/queries'
 import { brand } from '@/lib/config/brand'
+import { brandIconDefaults } from '@/lib/config/brand-icon-defaults'
 import type { Category, Brand, SocialLink } from '@/types/database'
 
 // Map category slugs → Lucide icons. Falls back to HardHat for unknown slugs.
@@ -78,6 +79,59 @@ function CategoryLink({ category }: { category: Category }) {
   )
 }
 
+function BrandAvatar({ b }: { b: Brand }) {
+  // Priority 1: Admin-uploaded logo
+  if (b.logo) {
+    return (
+      <span className="shrink-0 w-6 h-6 rounded overflow-hidden flex items-center justify-center bg-secondary/60 border border-border/50 group-hover:border-primary/30 transition-colors">
+        <Image
+          src={b.logo}
+          alt={b.name}
+          width={24}
+          height={24}
+          className="w-full h-full object-contain"
+        />
+      </span>
+    )
+  }
+
+  const defaults = brandIconDefaults[b.slug]
+
+  // Priority 2a: Static image file from config (added when real logos land in /public)
+  if (defaults?.imagePath) {
+    return (
+      <span className="shrink-0 w-6 h-6 rounded overflow-hidden flex items-center justify-center bg-secondary/60 border border-border/50 group-hover:border-primary/30 transition-colors">
+        <Image
+          src={defaults.imagePath}
+          alt={b.name}
+          width={24}
+          height={24}
+          className="w-full h-full object-contain"
+        />
+      </span>
+    )
+  }
+
+  // Priority 2b: Colored initials badge from config
+  if (defaults) {
+    return (
+      <span
+        className="shrink-0 w-6 h-6 rounded flex items-center justify-center text-[9px] font-bold leading-none select-none"
+        style={{ backgroundColor: defaults.bg, color: defaults.fg }}
+      >
+        {defaults.initials}
+      </span>
+    )
+  }
+
+  // Priority 3: Generic fallback for unknown brands
+  return (
+    <span className="shrink-0 w-6 h-6 rounded flex items-center justify-center bg-secondary/60 border border-border/50 group-hover:border-primary/30 transition-colors">
+      <Package className="w-3 h-3 text-muted-foreground group-hover:text-primary transition-colors" />
+    </span>
+  )
+}
+
 function BrandLink({ brand: b }: { brand: Brand }) {
   return (
     <li>
@@ -85,19 +139,7 @@ function BrandLink({ brand: b }: { brand: Brand }) {
         href={`/catalogo?marca=${b.slug}`}
         className="group flex items-center gap-2.5 text-sm text-muted-foreground hover:text-primary transition-colors"
       >
-        <span className="shrink-0 w-6 h-6 rounded overflow-hidden flex items-center justify-center bg-secondary/60 border border-border/50 group-hover:border-primary/30 transition-colors">
-          {b.logo ? (
-            <Image
-              src={b.logo}
-              alt={b.name}
-              width={24}
-              height={24}
-              className="w-full h-full object-contain"
-            />
-          ) : (
-            <Package className="w-3 h-3 text-muted-foreground group-hover:text-primary transition-colors" />
-          )}
-        </span>
+        <BrandAvatar b={b} />
         <span className="truncate leading-snug">{b.name}</span>
       </Link>
     </li>

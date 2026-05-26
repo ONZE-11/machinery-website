@@ -3,7 +3,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { ArrowRight, Shovel, Tractor, Cog, ArrowUpFromLine, HardHat, Forklift, type LucideIcon } from 'lucide-react'
+import { ArrowRight, Tractor, Cog, HardHat, Forklift, type LucideIcon } from 'lucide-react'
+import { MiniExcavadoraIcon, ElevadoresIcon } from '@/components/ui/machinery-icons'
 import type { Category } from '@/types/database'
 
 interface CategoriesSectionProps {
@@ -11,11 +12,11 @@ interface CategoriesSectionProps {
 }
 
 const categoryIcons: Record<string, LucideIcon> = {
-  'mini-excavadoras': Shovel,
-  'mini-tractores': Tractor,
-  'mini-cargadoras': Cog,
-  'elevadores-compactos': ArrowUpFromLine,
-  'equipos-construccion': HardHat,
+  'mini-excavadoras':      MiniExcavadoraIcon as unknown as LucideIcon,
+  'mini-tractores':        Tractor,
+  'mini-cargadoras':       Cog,
+  'elevadores-compactos':  ElevadoresIcon as unknown as LucideIcon,
+  'equipos-construccion':  HardHat,
   'carretillas-elevadoras': Forklift,
 }
 

@@ -1,27 +1,30 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Phone, Mail, MapPin, Instagram, Youtube } from 'lucide-react'
-import { getContactSettings, getActiveSocialLinks } from '@/lib/supabase/queries'
+import {
+  Phone, Mail, MapPin, Instagram, Youtube,
+  Shovel, Tractor, Cog, ArrowUpFromLine, HardHat, Forklift,
+  Package, type LucideIcon,
+} from 'lucide-react'
+import {
+  getContactSettings,
+  getActiveSocialLinks,
+  getActiveCategories,
+  getActiveBrands,
+} from '@/lib/supabase/queries'
 import { brand } from '@/lib/config/brand'
-import type { SocialLink } from '@/types/database'
+import type { Category, Brand, SocialLink } from '@/types/database'
 
-const footerLinks = {
-  catalogo: [
-    { name: 'Mini Excavadoras', href: '/catalogo?categoria=mini-excavadoras' },
-    { name: 'Mini Tractores', href: '/catalogo?categoria=mini-tractores' },
-    { name: 'Mini Cargadoras', href: '/catalogo?categoria=mini-cargadoras' },
-    { name: 'Elevadores', href: '/catalogo?categoria=elevadores-compactos' },
-    { name: 'Carretillas', href: '/catalogo?categoria=carretillas-elevadoras' },
-    { name: 'Ver Todo', href: '/catalogo' },
-  ],
-  marcas: [
-    { name: 'Kubota', href: '/catalogo?marca=kubota' },
-    { name: 'Yanmar', href: '/catalogo?marca=yanmar' },
-    { name: 'Komatsu', href: '/catalogo?marca=komatsu' },
-    { name: 'Iseki', href: '/catalogo?marca=iseki' },
-    { name: 'Hinowa', href: '/catalogo?marca=hinowa' },
-    { name: 'Toyota', href: '/catalogo?marca=toyota' },
-  ],
+// Map category slugs → Lucide icons. Falls back to HardHat for unknown slugs.
+const categoryIcons: Record<string, LucideIcon> = {
+  'mini-excavadoras': Shovel,
+  'mini-tractores': Tractor,
+  'mini-cargadoras': Cog,
+  'elevadores-compactos': ArrowUpFromLine,
+  'equipos-construccion': HardHat,
+  'carretillas-elevadoras': Forklift,
+}
+
+const staticLinks = {
   empresa: [
     { name: 'Sobre Nosotros', href: '/sobre-nosotros' },
     { name: '¿Por Qué Japonesa?', href: '/por-que-maquinaria-japonesa' },
@@ -58,10 +61,55 @@ function SocialIcon({ platform }: { platform: string }) {
   }
 }
 
+function CategoryLink({ category }: { category: Category }) {
+  const Icon = categoryIcons[category.slug] ?? HardHat
+  return (
+    <li>
+      <Link
+        href={`/catalogo?categoria=${category.slug}`}
+        className="group flex items-center gap-2.5 text-sm text-muted-foreground hover:text-primary transition-colors"
+      >
+        <span className="shrink-0 w-6 h-6 rounded flex items-center justify-center bg-primary/8 group-hover:bg-primary/15 transition-colors">
+          <Icon className="w-3.5 h-3.5 text-primary/70 group-hover:text-primary transition-colors" />
+        </span>
+        <span className="truncate leading-snug">{category.name}</span>
+      </Link>
+    </li>
+  )
+}
+
+function BrandLink({ brand: b }: { brand: Brand }) {
+  return (
+    <li>
+      <Link
+        href={`/catalogo?marca=${b.slug}`}
+        className="group flex items-center gap-2.5 text-sm text-muted-foreground hover:text-primary transition-colors"
+      >
+        <span className="shrink-0 w-6 h-6 rounded overflow-hidden flex items-center justify-center bg-secondary/60 border border-border/50 group-hover:border-primary/30 transition-colors">
+          {b.logo ? (
+            <Image
+              src={b.logo}
+              alt={b.name}
+              width={24}
+              height={24}
+              className="w-full h-full object-contain"
+            />
+          ) : (
+            <Package className="w-3 h-3 text-muted-foreground group-hover:text-primary transition-colors" />
+          )}
+        </span>
+        <span className="truncate leading-snug">{b.name}</span>
+      </Link>
+    </li>
+  )
+}
+
 export async function Footer() {
-  const [settings, socialLinks] = await Promise.all([
+  const [settings, socialLinks, categories, brands] = await Promise.all([
     getContactSettings(),
     getActiveSocialLinks(),
+    getActiveCategories(),
+    getActiveBrands(),
   ])
 
   const phone = settings.phone ?? ''
@@ -84,6 +132,7 @@ export async function Footer() {
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
+
           {/* Brand & Contact */}
           <div className="lg:col-span-2">
             <Link href="/" className="inline-block mb-6">
@@ -111,19 +160,19 @@ export async function Footer() {
             <div className="space-y-3">
               {phone && (
                 <a href={`tel:${phone.replace(/\s/g, '')}`} className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors">
-                  <Phone className="w-4 h-4 text-primary" />
+                  <Phone className="w-4 h-4 text-primary shrink-0" />
                   <span>{phone}</span>
                 </a>
               )}
               {email && (
                 <a href={`mailto:${email}`} className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors">
-                  <Mail className="w-4 h-4 text-primary" />
+                  <Mail className="w-4 h-4 text-primary shrink-0" />
                   <span>{email}</span>
                 </a>
               )}
               {address && (
                 <div className="flex items-start gap-3 text-sm text-muted-foreground">
-                  <MapPin className="w-4 h-4 text-primary mt-0.5" />
+                  <MapPin className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                   <span>{address}</span>
                 </div>
               )}
@@ -147,36 +196,51 @@ export async function Footer() {
             )}
           </div>
 
-          <div>
+          {/* Catálogo — dynamic categories with icons */}
+          <div className="min-w-0">
             <h3 className="font-serif text-lg tracking-wider text-foreground mb-4">CATÁLOGO</h3>
-            <ul className="space-y-2">
-              {footerLinks.catalogo.map((link) => (
-                <li key={link.name}>
-                  <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                    {link.name}
+            {categories.length > 0 ? (
+              <ul className="space-y-2.5">
+                {categories.map((cat) => (
+                  <CategoryLink key={cat.id} category={cat} />
+                ))}
+                <li className="pt-1">
+                  <Link
+                    href="/catalogo"
+                    className="text-sm text-primary/80 hover:text-primary transition-colors font-medium"
+                  >
+                    Ver todo →
                   </Link>
                 </li>
-              ))}
-            </ul>
+              </ul>
+            ) : (
+              <Link href="/catalogo" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                Ver Catálogo
+              </Link>
+            )}
           </div>
 
-          <div>
+          {/* Marcas — dynamic brands with logos/fallback */}
+          <div className="min-w-0">
             <h3 className="font-serif text-lg tracking-wider text-foreground mb-4">MARCAS</h3>
-            <ul className="space-y-2">
-              {footerLinks.marcas.map((link) => (
-                <li key={link.name}>
-                  <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            {brands.length > 0 ? (
+              <ul className="space-y-2.5">
+                {brands.map((b) => (
+                  <BrandLink key={b.id} brand={b} />
+                ))}
+              </ul>
+            ) : (
+              <Link href="/catalogo" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                Ver Marcas
+              </Link>
+            )}
           </div>
 
-          <div>
+          {/* Empresa & Legal */}
+          <div className="min-w-0">
             <h3 className="font-serif text-lg tracking-wider text-foreground mb-4">EMPRESA</h3>
             <ul className="space-y-2">
-              {footerLinks.empresa.map((link) => (
+              {staticLinks.empresa.map((link) => (
                 <li key={link.name}>
                   <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors">
                     {link.name}
@@ -186,7 +250,7 @@ export async function Footer() {
             </ul>
             <h3 className="font-serif text-lg tracking-wider text-foreground mb-4 mt-8">LEGAL</h3>
             <ul className="space-y-2">
-              {footerLinks.legal.map((link) => (
+              {staticLinks.legal.map((link) => (
                 <li key={link.name}>
                   <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors">
                     {link.name}

@@ -1,8 +1,9 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import Image from "next/image"
 import { motion } from "framer-motion"
+import { useSearchParams, useRouter } from "next/navigation"
 import { ProductGrid, ProductFilters, FilterState } from "@/components/products"
 import {
   Select,
@@ -20,16 +21,28 @@ interface Props {
 }
 
 export function CatalogoPageClient({ initialProducts, categories, brands }: Props) {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+
   const [filters, setFilters] = useState<FilterState>({
     search: "",
-    category: null,
-    brand: null,
+    category: searchParams.get("categoria"),
+    brand: searchParams.get("marca"),
     condition: null,
     minYear: null,
     maxYear: null,
     featured: false,
     sortBy: "newest",
   })
+
+  // Sync URL params → filter state on client-side navigation (e.g. footer/homepage links)
+  useEffect(() => {
+    setFilters((prev) => ({
+      ...prev,
+      category: searchParams.get("categoria"),
+      brand: searchParams.get("marca"),
+    }))
+  }, [searchParams])
 
   const filteredProducts = useMemo(() => {
     let result = [...initialProducts]
@@ -113,6 +126,7 @@ export function CatalogoPageClient({ initialProducts, categories, brands }: Prop
             <aside className="lg:w-64 flex-shrink-0">
               <div className="bg-card rounded-lg border border-border p-5 sticky top-24">
                 <ProductFilters
+                  key={`${filters.category ?? "all"}-${filters.brand ?? "all"}`}
                   categories={categories}
                   brands={brands}
                   onFilterChange={setFilters}

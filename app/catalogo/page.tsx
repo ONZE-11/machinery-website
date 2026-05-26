@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { Suspense } from "react"
 import { Header, Footer, WhatsAppButton } from "@/components/layout"
 import { CatalogoPageClient } from "./catalogo-client"
 import {
@@ -37,11 +38,13 @@ export default async function CatalogoPage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <CatalogoPageClient
-        initialProducts={products}
-        categories={categories}
-        brands={brands}
-      />
+      <Suspense>
+        <CatalogoPageClient
+          initialProducts={products}
+          categories={categories}
+          brands={brands}
+        />
+      </Suspense>
       <Footer />
       <WhatsAppButton />
     </div>

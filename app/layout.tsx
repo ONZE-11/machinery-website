@@ -5,6 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { brand } from "@/lib/config/brand";
 // @ts-ignore: import global CSS side effect
 import "./globals.css";
+// trigger vercel redeploy
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || brand.siteUrl;
 

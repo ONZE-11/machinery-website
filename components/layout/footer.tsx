@@ -2,9 +2,10 @@ import Link from 'next/link'
 import Image from 'next/image'
 import {
   Phone, Mail, MapPin, Instagram, Youtube,
-  Shovel, Tractor, Cog, ArrowUpFromLine, HardHat, Forklift,
+  Tractor, Cog, HardHat, Forklift,
   Package, type LucideIcon,
 } from 'lucide-react'
+import { MiniExcavadoraIcon, ElevadoresIcon } from '@/components/ui/machinery-icons'
 import {
   getContactSettings,
   getActiveSocialLinks,
@@ -15,12 +16,13 @@ import { brand } from '@/lib/config/brand'
 import { brandIconDefaults } from '@/lib/config/brand-icon-defaults'
 import type { Category, Brand, SocialLink } from '@/types/database'
 
-// Map category slugs → Lucide icons. Falls back to HardHat for unknown slugs.
+// Map category slugs → icon components. Two use custom SVG silhouettes; rest are Lucide.
+// Falls back to HardHat for unknown slugs.
 const categoryIcons: Record<string, LucideIcon> = {
-  'mini-excavadoras': Shovel,
-  'mini-tractores': Tractor,
-  'mini-cargadoras': Cog,
-  'elevadores-compactos': ArrowUpFromLine,
+  'mini-excavadoras':    MiniExcavadoraIcon as unknown as LucideIcon,
+  'mini-tractores':      Tractor,
+  'mini-cargadoras':     Cog,
+  'elevadores-compactos': ElevadoresIcon as unknown as LucideIcon,
   'equipos-construccion': HardHat,
   'carretillas-elevadoras': Forklift,
 }

@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ProductCard } from '@/components/products/product-card'
 import type { Product } from '@/types/database'
+import { normalizeImageUrl } from '@/lib/supabase/storage-helpers'
 
 interface FeaturedProductsProps {
   products: Product[]
@@ -21,7 +22,7 @@ const conditionLabels: Record<string, string> = {
 }
 
 function SpotlightCard({ product }: { product: Product }) {
-  const image = product.hero_image || '/images/placeholder-machinery.jpg'
+  const image = normalizeImageUrl(product.hero_image)
 
   return (
     <motion.div

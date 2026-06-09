@@ -1,3 +1,6 @@
+// Always render server-side so admin changes appear without a redeploy
+export const dynamic = "force-dynamic"
+
 import type { Metadata } from "next"
 import { Header, Footer, WhatsAppButton } from "@/components/layout"
 import { MarcasPageClient } from "./marcas-client"

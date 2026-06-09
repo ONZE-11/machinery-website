@@ -1,3 +1,8 @@
+// Always re-render on each request so admin edits (images, price, status)
+// appear immediately without a full redeploy.
+export const revalidate = 0
+export const dynamicParams = true
+
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import { Header, Footer, WhatsAppButton } from "@/components/layout"
@@ -11,8 +16,6 @@ import {
 interface Props {
   params: Promise<{ slug: string }>
 }
-
-export const dynamicParams = true
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params

@@ -13,6 +13,7 @@ import {
 } from "@/components/sections"
 import {
   getFeaturedProducts,
+  getPublishedProducts,
   getActiveCategories,
   getActiveBrands,
   getActiveFAQs,
@@ -20,7 +21,7 @@ import {
 } from "@/lib/supabase/queries"
 
 export default async function HomePage() {
-  const [products, categories, brands, faqs, heroSection, whySection] = await Promise.all([
+  const [featured, categories, brands, faqs, heroSection, whySection] = await Promise.all([
     getFeaturedProducts(6),
     getActiveCategories(),
     getActiveBrands(),
@@ -28,6 +29,10 @@ export default async function HomePage() {
     getHomepageSection('hero'),
     getHomepageSection('why_japanese_home'),
   ])
+
+  // If no featured products are set in admin, fall back to the 6 most recent published products
+  // so the homepage always shows something in the "Featured" section.
+  const products = featured.length > 0 ? featured : await getPublishedProducts({ limit: 6 })
 
   const heroImageUrl = heroSection?.image ?? null
   const whyImageUrl  = whySection?.image  ?? null
@@ -39,7 +44,7 @@ export default async function HomePage() {
         <HeroSection imageUrl={heroImageUrl} />
         <FeaturedProducts products={products} />
         <CategoriesSection categories={categories} />
-        <BrandsSection brands={brands} />
+        <BrandsSection brands={brands} products={products} />
         <WhyJapaneseSection imageUrl={whyImageUrl} />
         <FAQSection faqs={faqs} />
         <CTASection />

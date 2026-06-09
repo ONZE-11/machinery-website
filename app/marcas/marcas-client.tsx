@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowRight, Wrench, Factory, Shield } from "lucide-react"
 import type { Brand, Product } from "@/types/database"
+import { normalizeImageUrl } from "@/lib/supabase/storage-helpers"
+import { brandIconDefaults } from "@/lib/config/brand-icon-defaults"
 
 interface Props {
   brands: Brand[]
@@ -14,6 +16,14 @@ interface Props {
 }
 
 export function MarcasPageClient({ brands, products }: Props) {
+  // Build brand-id → first product image map for fallback (tier 2)
+  const productImageByBrand = new Map<string, string>()
+  for (const p of products) {
+    if (p.brand_id && p.hero_image && !productImageByBrand.has(p.brand_id)) {
+      productImageByBrand.set(p.brand_id, p.hero_image)
+    }
+  }
+
   return (
     <main>
       {/* Dark Cinematic Hero */}
@@ -98,7 +108,15 @@ export function MarcasPageClient({ brands, products }: Props) {
                 .sort((a, b) => (a.display_order || 0) - (b.display_order || 0))
                 .map((brand, index) => {
                   const productCount = products.filter((p) => p.brand_id === brand.id).length
-                  const imageSrc = brand.hero_image || `/images/brands/brand-${brand.slug}.jpg`
+                  // Tier 1: brand's own hero image (DB upload)
+                  // Tier 2: known local static file from config (seeded brands)
+                  // Tier 3: first product image for this brand (new admin-added brands)
+                  // Tier 4: null → dark CSS gradient (no broken-image icon)
+                  const localHero = brandIconDefaults[brand.slug]?.heroImagePath ?? null
+                  const rawImage = brand.hero_image ?? localHero ?? productImageByBrand.get(brand.id) ?? null
+                  const resolvedImage = rawImage
+                    ? normalizeImageUrl(rawImage, brand.hero_image ? 'brands' : 'products')
+                    : null
                   return (
                     <motion.div
                       key={brand.id}
@@ -109,14 +127,18 @@ export function MarcasPageClient({ brands, products }: Props) {
                       className="group bg-card border border-border rounded-xl overflow-hidden hover:border-[var(--primary)]/50 hover:shadow-xl transition-all duration-300"
                     >
                       {/* Image header */}
-                      <div className="relative h-44 overflow-hidden">
-                        <Image
-                          src={imageSrc}
-                          alt={`Maquinaria ${brand.name}`}
-                          fill
-                          className="object-cover transition-transform duration-700 group-hover:scale-105"
-                          sizes="(max-width: 768px) 100vw, 33vw"
-                        />
+                      <div className="relative h-44 overflow-hidden bg-secondary">
+                        {resolvedImage ? (
+                          <Image
+                            src={resolvedImage}
+                            alt={`Maquinaria ${brand.name}`}
+                            fill
+                            className="object-cover transition-transform duration-700 group-hover:scale-105"
+                            sizes="(max-width: 768px) 100vw, 33vw"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-950" />
+                        )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
                         <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
                           <div>

@@ -4,13 +4,24 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
-import type { Brand } from '@/types/database'
+import type { Brand, Product } from '@/types/database'
+import { normalizeImageUrl } from '@/lib/supabase/storage-helpers'
+import { brandIconDefaults } from '@/lib/config/brand-icon-defaults'
 
 interface BrandsSectionProps {
   brands: Brand[]
+  products?: Product[]
 }
 
-export function BrandsSection({ brands }: BrandsSectionProps) {
+export function BrandsSection({ brands, products = [] }: BrandsSectionProps) {
+  // Build brand-id → first product image map for fallback (tier 2)
+  const productImageByBrand = new Map<string, string>()
+  for (const p of products) {
+    if (p.brand_id && p.hero_image && !productImageByBrand.has(p.brand_id)) {
+      productImageByBrand.set(p.brand_id, p.hero_image)
+    }
+  }
+
   return (
     <section className="py-24 bg-background">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -38,7 +49,16 @@ export function BrandsSection({ brands }: BrandsSectionProps) {
         {/* Image-backed brand grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {brands.map((brand, index) => {
-            const imageSrc = brand.hero_image || `/images/brands/brand-${brand.slug}.jpg`
+            // Tier 1: brand's own hero image (DB upload)
+            // Tier 2: known local static file from config (seeded brands)
+            // Tier 3: first product image for this brand (new admin-added brands)
+            // Tier 4: null → dark CSS gradient (no broken-image icon)
+            const localHero = brandIconDefaults[brand.slug]?.heroImagePath ?? null
+            const rawImage = brand.hero_image ?? localHero ?? productImageByBrand.get(brand.id) ?? null
+            const imageSrc = rawImage
+              ? normalizeImageUrl(rawImage, brand.hero_image ? 'brands' : 'products')
+              : null
+
             return (
               <motion.div
                 key={brand.id}
@@ -49,14 +69,18 @@ export function BrandsSection({ brands }: BrandsSectionProps) {
               >
                 <Link href={`/catalogo?marca=${brand.slug}`} className="block">
                   <div className="group relative h-48 md:h-56 rounded-xl overflow-hidden">
-                    {/* Background image */}
-                    <Image
-                      src={imageSrc}
-                      alt={`Maquinaria ${brand.name}`}
-                      fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
-                      sizes="(max-width: 768px) 50vw, 33vw"
-                    />
+                    {/* Background: real image or clean dark gradient */}
+                    {imageSrc ? (
+                      <Image
+                        src={imageSrc}
+                        alt={`Maquinaria ${brand.name}`}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        sizes="(max-width: 768px) 50vw, 33vw"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-950" />
+                    )}
                     {/* Dark gradient */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10" />
                     {/* Hover tint */}

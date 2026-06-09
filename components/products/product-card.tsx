@@ -6,6 +6,7 @@ import { motion } from "framer-motion"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, Gauge, ArrowRight } from "lucide-react"
 import type { Product } from "@/types/database"
+import { normalizeImageUrl } from "@/lib/supabase/storage-helpers"
 
 interface ProductCardProps {
   product: Product
@@ -26,7 +27,7 @@ const conditionColors: Record<string, string> = {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const mainImage = product.hero_image || "/images/placeholder-machinery.jpg"
+  const mainImage = normalizeImageUrl(product.hero_image)
 
   return (
     <motion.div
